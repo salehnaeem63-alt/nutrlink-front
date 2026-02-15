@@ -1,4 +1,4 @@
-/* Page wrapper */
+
 .login-page {
   min-height: 100vh;
   width: 100%;
@@ -7,7 +7,7 @@
   overflow-x: hidden;
 }
 
-/* Navbar */
+
 .navbar {
   background: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -94,7 +94,6 @@
   box-shadow: 0 4px 12px rgba(0, 200, 83, 0.4);
 }
 
-/* Login container */
 .login-container {
   display: flex;
   align-items: center;
@@ -144,7 +143,7 @@
   margin: 0;
 }
 
-/* Form styling */
+
 .login-form {
   display: flex;
   flex-direction: column;
@@ -198,7 +197,7 @@
   color: #aaa;
 }
 
-/* Form options (Remember me + Forgot password) */
+
 .form-options {
   display: flex;
   justify-content: space-between;
@@ -234,7 +233,7 @@
   text-decoration: underline;
 }
 
-/* Login button */
+
 .login-button {
   background: linear-gradient(135deg, #00c853 0%, #00b248 100%);
   color: white;
@@ -258,7 +257,7 @@
   transform: translateY(0);
 }
 
-/* Divider */
+
 .divider {
   display: flex;
   align-items: center;
@@ -280,7 +279,7 @@
   font-weight: 500;
 }
 
-/* Social buttons */
+
 .social-buttons {
   display: flex;
   flex-direction: column;
