@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Register.css';
 import {register} from "../api/serverapi"
 import {  GoogleLogin } from '@react-oauth/google';
-import { loginWithGoogle } from "../api/serverapi"; // new function for Google login
+import { loginWithGoogle } from "../api/serverapi";
 
 
 const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -24,33 +25,51 @@ const Register = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!formData.agreeToTerms) {
-    alert('Please agree to the Terms of Service and Privacy Policy');
-    return;
-  }
+    if (!formData.agreeToTerms) {
+      alert('Please agree to the Terms of Service and Privacy Policy');
+      return;
+    }
 
-  if (formData.password !== formData.confirmPassword) {
-    alert('Passwords do not match!');
-    return;
-  }
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
 
-  try {
-    const response = await register({
-      email: formData.email,
-      username: formData.fullName,  
-      password: formData.password,
-      role: "customer"
-    });
+    try {
+      const response = await register({
+        email: formData.email,
+        username: formData.fullName,  
+        password: formData.password,
+      });
 
-    console.log("Success:", response);
-    alert("Account created successfully!");
+      console.log("Success:", response);
+      localStorage.setItem('authToken', response.token);
+      alert("Account created successfully!");
+      navigate('/dashboard');
 
-  } catch (error) {
-    alert(error.message);
-  }
-};
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    console.log("Google credential:", credentialResponse);
+    try {
+      const res = await loginWithGoogle({ 
+        token: credentialResponse.credential, 
+        role: 'customer' 
+      });
+      localStorage.setItem('authToken', res.token);
+      alert('Logged in with Google successfully!');
+      console.log(res);
+      navigate('/dashboard');
+    } catch (err) {
+      console.error(err);
+      alert('Google login failed');
+    }
+  };
 
 
   return (
@@ -184,28 +203,12 @@ const Register = () => {
           </div>
 
           <div className="social-buttons">
-           <GoogleLogin
-  onSuccess={async (credentialResponse) => {
-      console.log("Google credential:", credentialResponse);
-    try {
-      const res = await loginWithGoogle({ 
-        token: credentialResponse.credential, 
-        role: 'customer' 
-      });
-      localStorage.setItem('authToken', res.token);
-      alert('Logged in with Google successfully!');
-      console.log(res);
-      // navigate('/dashboard'); // optional
-    } catch (err) {
-      console.error(err);
-      alert('Google login failed');
-    }
-  }}
-  onError={() => {
-    alert('Google login failed');
-  }}
-/>
-
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => {
+                alert('Google login failed');
+              }}
+            />
           </div>
 
           <div className="already-account">

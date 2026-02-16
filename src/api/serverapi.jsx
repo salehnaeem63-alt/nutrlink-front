@@ -11,7 +11,7 @@ export async function register(info) {
                     email: info.email,
                     username: info.username,
                     password: info.password,
-                    role:"customer"
+                    role: "customer"
                 }),
             }
         );
@@ -29,15 +29,16 @@ export async function register(info) {
         throw error; 
     }
 }
+
 //login
 export async function login(info) {
     try {
-        const dat={password:info.password}
+        const dat = { password: info.password }
         if (info.email) {
-            dat.email=info.email
+            dat.email = info.email
         }
         if (info.username) {
-            dat.username=info.username
+            dat.username = info.username
         }
         const res = await fetch(
             "http://localhost:5000/nutrlink/api/auth/login",
@@ -53,7 +54,7 @@ export async function login(info) {
         const data = await res.json();
 
         if (!res.ok) {
-            throw new Error(data.message || "Registration failed");
+            throw new Error(data.message || "Login failed");
         }
 
         return data;
@@ -65,13 +66,22 @@ export async function login(info) {
 }
 
 export async function loginWithGoogle({ token, role }) {
-  const res = await fetch("http://localhost:5000/nutrlink/api/auth/google", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token, role }),
-  });
+    try {
+        const res = await fetch("http://localhost:5000/nutrlink/api/auth/google", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token, role }),
+        });
 
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Google login failed');
-  return data;
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.message || 'Google login failed');
+        }
+        
+        return data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
 }
