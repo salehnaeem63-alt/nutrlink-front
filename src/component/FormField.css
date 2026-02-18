@@ -1,0 +1,54 @@
+/* ─────────────────────────────────────────────
+   FormField.css
+   ───────────────────────────────────────────── */
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-field__input-wrap {
+  position: relative;
+}
+
+.form-field__icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-subtle);
+  pointer-events: none;
+  stroke-width: 2;
+  display: flex;
+  align-items: center;
+}
+
+.form-field__input {
+  width: 100%;
+  padding: 14px 14px 14px 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-family: var(--font-base);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  outline: none;
+  background: var(--color-input-bg);
+  color: var(--color-text);
+}
+
+.form-field__input:focus {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.1);
+}
+
+.form-field__input::placeholder {
+  color: #aaa;
+}

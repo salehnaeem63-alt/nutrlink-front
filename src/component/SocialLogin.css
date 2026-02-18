@@ -1,0 +1,35 @@
+/* ─────────────────────────────────────────────
+   SocialLogin.css
+   ───────────────────────────────────────────── */
+
+.social-login {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Fallback button (shown if @react-oauth/google renders its own UI) */
+.social-login__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  color: #555;
+  width: 100%;
+  font-family: var(--font-base);
+}
+
+.social-login__btn:hover {
+  background: #f9f9f9;
+  border-color: #ccc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}

@@ -1,0 +1,63 @@
+/* ─────────────────────────────────────────────
+   global.css  –  design tokens & resets
+   ───────────────────────────────────────────── */
+
+:root {
+  /* Brand colors */
+  --color-primary:       #00c853;
+  --color-primary-dark:  #00b248;
+  --color-accent:        #00bcd4;
+  --color-accent-dark:   #00acc1;
+
+  /* Neutrals */
+  --color-bg:            linear-gradient(180deg, #e8f5e9 0%, #f1f8f4 100%);
+  --color-surface:       #ffffff;
+  --color-border:        #dddddd;
+  --color-text:          #1a1a1a;
+  --color-text-muted:    #666666;
+  --color-text-subtle:   #999999;
+  --color-input-bg:      #fafafa;
+
+  /* Shadows */
+  --shadow-card:         0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-navbar:       0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-btn:          0 4px 12px rgba(0, 200, 83, 0.3);
+  --shadow-btn-hover:    0 6px 16px rgba(0, 200, 83, 0.4);
+
+  /* Radii */
+  --radius-sm:  6px;
+  --radius-md:  8px;
+  --radius-lg:  16px;
+
+  /* Spacing */
+  --navbar-height: 72px;
+
+  /* Font */
+  --font-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+               'Oxygen', 'Ubuntu', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-base);
+}
+
+/* Shared page wrapper */
+.auth-page {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--color-bg);
+  overflow-x: hidden;
+}
+
+/* Fade-up entrance animation (used by cards) */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
