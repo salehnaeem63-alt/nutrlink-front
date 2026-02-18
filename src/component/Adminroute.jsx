@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 
 /**
  * AdminRoute
- * 
+ * this is new
  * Protects admin-only routes. Only users with isadmin: true can access.
  * Redirects to /dashboard if not an admin.
  */
