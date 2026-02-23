@@ -1,9 +1,9 @@
 import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-import Navbar      from '../component/Navbar';
-import AuthCard    from '../component/AuthCard';
-import FormField   from '../component/FormField';
+import Navbar from '../component/Navbar';
+import AuthCard from '../component/AuthCard';
+import FormField from '../component/FormField';
 import SocialLogin from '../component/SocialLogin';
 import { UserIcon, EmailIcon, LockIcon } from '../component/Icons';
 
@@ -12,43 +12,36 @@ import '../styles/global.css';
 import './Register.css';
 
 const NAV_LINKS = [
-  { label: 'Home',         href: '#home' },
-  { label: 'Features',     href: '#features' },
-  { label: 'How it Works', href: '#how-it-works' },
-  { label: 'Testimonials', href: '#testimonials' },
-  { label: 'Login',        to: '/login' },
+  { label: 'Home', to: '/home' },
+  { label: 'Dashboard', to: '/dashboard' },
+  { label: 'Profile', to: '/profile' },
+  { label: 'Calculator', to: '/calculator' },
+  { label: 'Login', to: '/login' },
 ];
 
-/**
- * Register
- *
- * Props:
- *   role – 'customer' | 'nutritionist'  (passed from RegisterType)
- *
- * Behaviour:
- *   - Customers  → standard form, auto-approved on submit, redirected to /dashboard
- *   - Nutritionists → same form + a required credential-image upload;
- *                     after submit they see a "pending approval" message instead
- *                     of being redirected, because their account is not yet approved.
- */
-const Register = ({ role = 'customer' }) => {
+const Register = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get role from RegisterType page
+  const role = location.state?.role || 'customer';
+  const roleLabel = role === 'nutritionist' ? 'Nutritionist' : 'Customer';
+
   const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
-    fullName:        '',
-    email:           '',
-    password:        '',
+    fullName: '',
+    email: '',
+    password: '',
     confirmPassword: '',
-    agreeToTerms:    false,
+    agreeToTerms: false,
   });
 
-  const [credentialFile, setCredentialFile]   = useState(null);   // File object
-  const [credentialPreview, setCredentialPreview] = useState(null); // Data URL for preview
-  const [pending, setPending] = useState(false); // true after nutritionist successfully registers
+  const [credentialFile, setCredentialFile] = useState(null);
+  const [credentialPreview, setCredentialPreview] = useState(null);
+  const [pending, setPending] = useState(false);
 
-  // ── Handlers ───────────────────────────────────────────────────────────────
-
+  // ── Handlers ──
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -61,7 +54,6 @@ const Register = ({ role = 'customer' }) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Basic client-side validation
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
     if (!allowed.includes(file.type)) {
       alert('Please upload a JPEG, PNG, or WEBP image.');
@@ -101,23 +93,18 @@ const Register = ({ role = 'customer' }) => {
     }
 
     try {
-      // Build FormData so we can include the file for nutritionists
       const payload = new FormData();
-      payload.append('email',    formData.email);
+      payload.append('email', formData.email);
       payload.append('username', formData.fullName);
       payload.append('password', formData.password);
-      payload.append('role',     role);
-      if (credentialFile) {
-        payload.append('credentialImage', credentialFile);
-      }
+      payload.append('role', role);
+      if (credentialFile) payload.append('credentialImage', credentialFile);
 
       const response = await register(payload);
 
       if (role === 'nutritionist') {
-        // Nutritionist is not yet approved → show pending message
-        setPending(true);
+        setPending(true); // show pending screen
       } else {
-        // Customer is auto-approved → go straight to dashboard
         localStorage.setItem('authToken', response.token);
         navigate('/dashboard');
       }
@@ -126,12 +113,11 @@ const Register = ({ role = 'customer' }) => {
     }
   };
 
-  // ── Pending screen (nutritionist after submit) ──────────────────────────────
-
+  // ── Pending screen for nutritionists ──
   if (pending) {
     return (
       <div className="auth-page">
-        <Navbar links={NAV_LINKS} />
+        <Navbar links={NAV_LINKS} ctaLabel="" />
         <div className="register-pending">
           <div className="register-pending__icon">🩺</div>
           <h2 className="register-pending__title">Application Submitted!</h2>
@@ -151,13 +137,16 @@ const Register = ({ role = 'customer' }) => {
     );
   }
 
-  // ── Main form ───────────────────────────────────────────────────────────────
-
-  const roleLabel = role === 'nutritionist' ? 'Nutritionist' : 'Customer';
+  // ── Main form ──
+  const ctaClick = () => navigate('/registerType');
 
   return (
     <div className="auth-page">
-      <Navbar links={NAV_LINKS} />
+      <Navbar
+        links={NAV_LINKS}
+        ctaLabel={roleLabel === 'Nutritionist' ? 'Register as Customer' : 'Register as Nutritionist'}
+        onCtaClick={ctaClick}
+      />
 
       <AuthCard
         title="Create Your Account"
@@ -215,43 +204,21 @@ const Register = ({ role = 'customer' }) => {
             required
           />
 
-          {/* ── Credential upload (nutritionists only) ── */}
           {role === 'nutritionist' && (
             <div className="form-field credential-upload">
-              <label className="form-field__label" htmlFor="credentialImage">
-                Credential / Certificate Image
-                <span className="credential-upload__required"> *</span>
+              <label htmlFor="credentialImage" className="form-field__label">
+                Credential / Certificate Image <span className="credential-upload__required">*</span>
               </label>
-              <p className="credential-upload__hint">
-                Upload a photo of your nutrition certification or relevant degree.
-                This will be reviewed by our admin team before your account is activated.
-              </p>
-
               {credentialPreview ? (
                 <div className="credential-upload__preview-wrap">
-                  <img
-                    src={credentialPreview}
-                    alt="Credential preview"
-                    className="credential-upload__preview"
-                  />
-                  <button
-                    type="button"
-                    className="credential-upload__remove"
-                    onClick={handleRemoveFile}
-                    aria-label="Remove image"
-                  >
+                  <img src={credentialPreview} alt="Credential preview" className="credential-upload__preview" />
+                  <button type="button" className="credential-upload__remove" onClick={handleRemoveFile}>
                     ✕ Remove
                   </button>
                 </div>
               ) : (
                 <label htmlFor="credentialImage" className="credential-upload__drop-zone">
-                  <span className="credential-upload__drop-icon">📄</span>
-                  <span className="credential-upload__drop-text">
-                    Click to upload or drag &amp; drop
-                  </span>
-                  <span className="credential-upload__drop-sub">
-                    JPEG, PNG, WEBP — max 5 MB
-                  </span>
+                  📄 Click to upload or drag & drop
                   <input
                     ref={fileInputRef}
                     id="credentialImage"
@@ -265,7 +232,6 @@ const Register = ({ role = 'customer' }) => {
             </div>
           )}
 
-          {/* Terms agreement */}
           <div className="register-form__terms">
             <label className="register-form__terms-label">
               <input
@@ -277,8 +243,7 @@ const Register = ({ role = 'customer' }) => {
               />
               <span>
                 I agree to the{' '}
-                <a href="#terms"   className="register-form__terms-link">Terms of Service</a>
-                {' '}and{' '}
+                <a href="#terms" className="register-form__terms-link">Terms of Service</a> and{' '}
                 <a href="#privacy" className="register-form__terms-link">Privacy Policy</a>
               </span>
             </label>

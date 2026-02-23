@@ -13,10 +13,10 @@ import './Login.css';
 
 // Nav links specific to the Login page
 const NAV_LINKS = [
-  { label: 'Home',         href: '#home' },
-  { label: 'Features',     href: '#features' },
-  { label: 'How it Works', href: '#how-it-works' },
-  { label: 'Testimonials', href: '#testimonials' },
+  { label: 'Home',         to: '/home' },
+  { label: 'Dashboard',     to: '/Dashboard' },
+  { label: 'Profile', to: '/Profile' },
+  { label: 'calculetor', to: '/calculetor' },
   { label: 'Register',     to: '/register' },
 ];
 

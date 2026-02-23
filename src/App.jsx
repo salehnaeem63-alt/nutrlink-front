@@ -8,6 +8,9 @@ import Dashboard      from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './component/ProtectedRoute';
 import AdminRoute     from './component/AdminRoute';
+import { Home } from './pages/Home';
+import { Calculetor } from './pages/Calculetor';
+import { Profile } from './pages/Profile';
 
 function App() {
   return (
@@ -19,6 +22,9 @@ function App() {
           <Route path="/login"       element={<Login />} />
           <Route path="/register"    element={<Register />} />
           <Route path="/registerType" element={<RegisterType />} />
+          <Route path="/home" element={<Home/>} />
+          <Route path="/calculetor" element={<Calculetor/>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>} />
 
           {/* Protected routes */}
           <Route
