@@ -11,6 +11,8 @@ import AdminRoute     from './component/AdminRoute';
 import { Home } from './pages/Home';
 import { Calculetor } from './pages/Calculetor';
 import { Profile } from './pages/Profile';
+import { CreatProfile } from './pages/CreatProfile';
+import { Updateprofile } from './pages/Updateprofile';
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path="/home" element={<Home/>} />
           <Route path="/calculetor" element={<Calculetor/>} />
           <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>} />
+          <Route path="/createprofile" element={<ProtectedRoute><CreatProfile/></ProtectedRoute>} />
+          <Route path="/updateprofile" element={<ProtectedRoute><Updateprofile/></ProtectedRoute>} />
 
           {/* Protected routes */}
           <Route
