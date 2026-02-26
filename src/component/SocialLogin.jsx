@@ -6,14 +6,12 @@ import './SocialLogin.css';
 /**
  * SocialLogin
  *
- * Renders the Google OAuth button and handles the credential exchange.
- *
  * Props:
  *   role          – 'customer' | 'nutritionist'  (sent to the API)
- *   redirectTo    – path to push after success   (default: '/dashboard')
+ *   redirectTo    – ignored now (redirect is role-based automatically)
  *   onSuccess     – optional extra callback(res)
  */
-const SocialLogin = ({ role = 'customer', redirectTo = '/dashboard', onSuccess }) => {
+const SocialLogin = ({ role = 'customer', redirectTo, onSuccess }) => {
   const navigate = useNavigate();
 
   const handleGoogleSuccess = async (credentialResponse) => {
@@ -22,9 +20,22 @@ const SocialLogin = ({ role = 'customer', redirectTo = '/dashboard', onSuccess }
         token: credentialResponse.credential,
         role,
       });
+
+      // ── Save token AND role ──────────────────────────
       localStorage.setItem('authToken', res.token);
+      localStorage.setItem('userRole',  res.role);   // ← NEW
+      // ────────────────────────────────────────────────
+
       onSuccess?.(res);
-      navigate(redirectTo);
+
+      // ── Redirect based on role ───────────────────────
+      if (res.role === 'nutritionist') {
+        navigate('/Nprofile');
+      } else {
+        navigate('/profile');
+      }
+      // ────────────────────────────────────────────────
+
     } catch (err) {
       console.error('Google login failed:', err);
       alert('Google login failed. Please try again.');

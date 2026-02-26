@@ -1,16 +1,28 @@
-import Navbar from "../component/Navbar"
-import { useNavigate } from "react-router-dom"
-
+import Navbar from "../component/Navbar";
+import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
-  const islogin= localStorage.getItem("authToken")
-  const navigate=useNavigate()
-  const ctaClick=()=>{
-    islogin?
-  navigate("/profile"):
-  navigate("/registerType")
-}
+  const navigate = useNavigate();
+  const isLogin  = localStorage.getItem("authToken");
+
+  /* ── CTA: Get Started (only shown when NOT logged in) ── */
+  const ctaClick = () => navigate("/registerType");
+
+  /* ── Logout ── */
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userRole");
+    navigate("/login");
+  };
+
   return (
-    <div><Navbar ctaLabel={ islogin ? "Profile" : "Get Started"} onCtaClick={ctaClick}></Navbar></div>
-  )
-}
+    <div>
+      <Navbar
+        ctaLabel={!isLogin ? "Get Started" : undefined}
+        onCtaClick={!isLogin ? ctaClick : undefined}
+        isLogin={isLogin}
+        onLogout={handleLogout}
+      />
+    </div>
+  );
+};

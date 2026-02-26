@@ -1,115 +1,429 @@
-.dashboard-page {
+/* ─────────────────────────────────────────────
+   Dashboard.css — Goals Page
+   Matches NutriPlan app: white cards, green accent,
+   light #f0faf4 background
+───────────────────────────────────────────── */
+
+/* ── PAGE ── */
+.db-page {
   min-height: 100vh;
-  background: #f5f7fa;
+  background: #f0faf4;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #111827;
+  padding: 40px 20px 80px;
 }
 
-.dashboard-navbar {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 1rem 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.dashboard-navbar .navbar-content {
-  max-width: 1200px;
+.db-container {
+  max-width: 720px;
   margin: 0 auto;
-  padding: 0 2rem;
   display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── TITLE ROW ── */
+.db-title-row {
+  display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  align-items: center;
+  gap: 16px;
 }
 
-.nav-right {
+.db-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px;
+}
+
+.db-subtitle {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ── ADD BUTTON ── */
+.db-add-btn {
+  flex-shrink: 0;
+  background: #22c55e;
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  white-space: nowrap;
+}
+.db-add-btn:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
+}
+.db-add-btn:active {
+  transform: translateY(0);
+}
+
+/* ── BASE CARD ── */
+.db-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+/* ── CREATE FORM CARD ── */
+.db-create-card {
+  padding: 24px 28px;
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.db-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 16px;
+}
+
+.db-create-form {
+  display: flex;
+  gap: 12px;
+}
+
+.db-input {
+  flex: 1;
+  padding: 11px 14px;
+  font-size: 0.92rem;
+  color: #111827;
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.db-input:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
+.db-input::placeholder {
+  color: #9ca3af;
+}
+
+.db-submit-btn {
+  flex-shrink: 0;
+  background: #22c55e;
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 22px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, transform 0.15s;
+}
+.db-submit-btn:hover:not(:disabled) {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+.db-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.db-btn-loading {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 8px;
 }
 
-.user-greeting {
-  color: #666;
-  font-size: 0.95rem;
+.db-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: db-spin 0.7s linear infinite;
 }
 
-.logout-btn {
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 0.5rem 1.5rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.logout-btn:hover {
-  background: #dc2626;
-}
-
-.dashboard-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 3rem 2rem;
-}
-
-.dashboard-header {
-  margin-bottom: 3rem;
-}
-
-.dashboard-header h1 {
-  font-size: 2.5rem;
-  color: #1a1a1a;
-  margin-bottom: 0.5rem;
-}
-
-.dashboard-header p {
-  color: #666;
-  font-size: 1.1rem;
-}
-
-.dashboard-cards {
+/* ── SUMMARY ROW ── */
+.db-summary-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 
-.dashboard-card {
-  background: white;
+.db-stat-card {
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.db-stat-card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.09);
+  transform: translateY(-2px);
+}
+
+.db-stat-icon {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.db-stat-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.db-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.1;
+}
+
+.db-stat-value--pending { color: #f59e0b; }
+.db-stat-value--done    { color: #22c55e; }
+
+/* ── FILTER TABS ── */
+.db-tabs {
+  display: flex;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 6px;
+  width: fit-content;
+}
+
+.db-tab {
+  padding: 8px 20px;
+  font-size: 0.87rem;
+  font-weight: 500;
+  color: #6b7280;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+}
+.db-tab:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+.db-tab--active {
+  background: #22c55e;
+  color: #ffffff;
+  font-weight: 600;
+}
+.db-tab--active:hover {
+  background: #16a34a;
 }
 
-.dashboard-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+/* ── GOALS LIST ── */
+.db-goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.card-icon {
+/* ── GOAL CARD ── */
+.db-goal-card {
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.db-goal-card:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+.db-goal-card--done {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+}
+
+/* Status dot */
+.db-goal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.db-goal-dot--pending { background: #f59e0b; }
+.db-goal-dot--done    { background: #22c55e; }
+
+/* Goal text */
+.db-goal-text {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #111827;
+  margin: 0;
+  line-height: 1.4;
+}
+.db-goal-text--done {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+/* Status badge */
+.db-badge {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+.db-badge--pending {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+.db-badge--done {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* Action buttons */
+.db-goal-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.db-action-btn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+.db-action-btn:hover {
+  transform: scale(1.08);
+}
+
+.db-action-btn--done {
+  color: #22c55e;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.db-action-btn--done:hover {
+  background: #dcfce7;
+  border-color: #bbf7d0;
+}
+
+.db-action-btn--delete {
+  color: #ef4444;
+}
+.db-action-btn--delete:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+/* ── EMPTY STATE ── */
+.db-empty {
+  padding: 56px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+.db-empty-icon {
   font-size: 3rem;
-  margin-bottom: 1rem;
+  margin-bottom: 8px;
+}
+.db-empty h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+.db-empty p {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  margin: 0;
 }
 
-.dashboard-card h3 {
-  font-size: 1.3rem;
-  color: #1a1a1a;
-  margin-bottom: 0.5rem;
-}
-
-.dashboard-card p {
-  color: #666;
+/* ── PAGE LOADER ── */
+.db-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 14px;
+  color: #6b7280;
   font-size: 0.95rem;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .dashboard-cards {
-    grid-template-columns: 1fr;
+.db-spinner-lg {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #22c55e;
+  border-radius: 50%;
+  animation: db-spin 0.75s linear infinite;
+}
+
+@keyframes db-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .db-title-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-  .dashboard-content {
-    padding: 2rem 1rem;
+  .db-add-btn {
+    width: 100%;
+    text-align: center;
+  }
+  .db-summary-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .db-create-form {
+    flex-direction: column;
+  }
+  .db-submit-btn {
+    width: 100%;
+  }
+  .db-goal-card {
+    flex-wrap: wrap;
+  }
+  .db-badge {
+    display: none; /* hide badge on very small screens, dot is enough */
+  }
+}
+
+@media (max-width: 380px) {
+  .db-summary-row {
+    grid-template-columns: 1fr;
   }
 }

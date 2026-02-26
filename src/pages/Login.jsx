@@ -11,13 +11,12 @@ import { login } from '../api/serverapi';
 import '../styles/global.css';
 import './Login.css';
 
-// Nav links specific to the Login page
 const NAV_LINKS = [
-  { label: 'Home',         to: '/home' },
-  { label: 'Dashboard',     to: '/Dashboard' },
-  { label: 'Profile', to: '/Profile' },
+  { label: 'Home',       to: '/home' },
+  { label: 'Dashboard',  to: '/Dashboard' },
+  { label: 'Profile',    to: '/Profile' },
   { label: 'calculetor', to: '/calculetor' },
-  { label: 'Register',     to: '/register' },
+  { label: 'Register',   to: '/register' },
 ];
 
 const Login = () => {
@@ -28,8 +27,6 @@ const Login = () => {
     password:   '',
     rememberMe: false,
   });
-
-  // ── Handlers ────────────────────────────────────────────────────────────────
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -46,14 +43,24 @@ const Login = () => {
         email:    formData.email,
         password: formData.password,
       });
+
+      // ── Save token AND role ──────────────────────────
       localStorage.setItem('authToken', response.token);
-      navigate('/dashboard');
+      localStorage.setItem('userRole',  response.role); // ← NEW
+      // ────────────────────────────────────────────────
+
+      // ── Redirect based on role ───────────────────────
+      if (response.role === 'nutritionist') {
+        navigate('/Nprofile');
+      } else {
+        navigate('/profile');                            // ← CHANGED (was /dashboard)
+      }
+      // ────────────────────────────────────────────────
+
     } catch (error) {
       alert(error.message);
     }
   };
-
-  // ── Render ───────────────────────────────────────────────────────────────────
 
   return (
     <div className="auth-page">
@@ -90,7 +97,6 @@ const Login = () => {
             required
           />
 
-          {/* Remember me + Forgot password */}
           <div className="login-form__options">
             <label className="login-form__remember">
               <input
@@ -113,6 +119,8 @@ const Login = () => {
           </div>
         </form>
 
+        {/* SocialLogin also needs to save the role — paste your SocialLogin.jsx
+            so I can update the Google login handler too */}
         <SocialLogin role="customer" redirectTo="/dashboard" />
       </AuthCard>
     </div>
