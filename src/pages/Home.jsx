@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import './Home.css';
 import FilterBar from '../component/FilterBar';
 import NutritionistCard from '../component/NutritionistCard';
-import { Aibot } from '../component/aibot';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -91,7 +90,6 @@ const Home = () => {
     <div className="home-page">
       {/* Navbar */}
       <nav className="navbar">
-        <Aibot></Aibot>
         <div className="navbar-content">
           <Link to="/" className="brand">
             <div className="brand-icon">N</div>
@@ -103,7 +101,7 @@ const Home = () => {
             <li><Link to="#dashboard">Dashboard</Link></li>
             <li><Link to="#profile">Profile</Link></li>
             <li><Link to="#calculator">Calculator</Link></li>
-            <li><Link to="/login">Login</Link></li>
+            {!isLogin && <li><Link to="/login">Login</Link></li>}
           </ul>
 
           {/* Conditional Button: Get Started or Logout */}
@@ -119,7 +117,7 @@ const Home = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section - Only show "Get Started" content when NOT logged in */}
       <section className="hero-section">
         <div className="hero-content">
           <div className="hero-text">
@@ -130,14 +128,26 @@ const Home = () => {
               Connect with expert nutritionists, track your diet, and achieve your wellness goals with our AI-powered platform.
             </p>
 
-            <div className="hero-buttons">
-              <Link to="/RegisterType">
-                <button className="btn-primary">Get Started</button>
-              </Link>
-              <Link to="/nutritionists">
-                <button className="btn-secondary">Book Appointment</button>
-              </Link>
-            </div>
+            {/* Conditional Buttons */}
+            {!isLogin ? (
+              <div className="hero-buttons">
+                <Link to="/RegisterType">
+                  <button className="btn-primary">Get Started</button>
+                </Link>
+                <Link to="/nutritionists">
+                  <button className="btn-secondary">Book Appointment</button>
+                </Link>
+              </div>
+            ) : (
+              <div className="hero-buttons">
+                <Link to="/dashboard">
+                  <button className="btn-primary">Go to Dashboard</button>
+                </Link>
+                <Link to="/nutritionists">
+                  <button className="btn-secondary">Find Nutritionists</button>
+                </Link>
+              </div>
+            )}
 
             {/* Stats */}
             <div className="hero-stats">
@@ -269,18 +279,20 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="cta-section">
-        <div className="cta-content">
-          <h2 className="cta-title">Ready to Transform Your Health?</h2>
-          <p className="cta-description">
-            Join thousands of people already achieving their wellness goals with NutriPlan
-          </p>
-          <Link to="/RegisterType">
-            <button className="cta-button">Start Your Journey Today</button>
-          </Link>
-        </div>
-      </section>
+      {/* CTA Section - Only show when NOT logged in */}
+      {!isLogin && (
+        <section className="cta-section">
+          <div className="cta-content">
+            <h2 className="cta-title">Ready to Transform Your Health?</h2>
+            <p className="cta-description">
+              Join thousands of people already achieving their wellness goals with NutriPlan
+            </p>
+            <Link to="/RegisterType">
+              <button className="cta-button">Start Your Journey Today</button>
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* Footer */}
       <footer className="footer">
