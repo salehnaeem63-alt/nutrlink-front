@@ -9,7 +9,10 @@ const BookingModal = ({ isOpen, onClose, nutritionist }) => {
 
   if (!isOpen || !nutritionist) return null;
 
-  // Generate dates for the current week
+  // Persuasive bio - uses nutritionist data or a high-converting default
+  const bioDescription = nutritionist.description || 
+    `Specializing in personalized nutrition plans that fit your lifestyle. With over ${nutritionist.experience || '5'} years of experience, I help clients achieve sustainable results through evidence-based coaching and constant support.`;
+
   const generateWeekDates = (weekOffset = 0) => {
     const today = new Date();
     const startDate = new Date(today);
@@ -27,7 +30,6 @@ const BookingModal = ({ isOpen, onClose, nutritionist }) => {
   const weekDates = generateWeekDates(currentWeek);
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  // Sample available times
   const availableTimes = {
     morning: ['09:00', '10:00', '11:00'],
     afternoon: ['13:00', '14:00', '15:00', '16:00'],
@@ -36,12 +38,10 @@ const BookingModal = ({ isOpen, onClose, nutritionist }) => {
 
   const handleDateClick = (date) => {
     setSelectedDate(date);
-    setSelectedTime(null); // Reset time when date changes
+    setSelectedTime(null);
   };
 
-  const handleTimeClick = (time) => {
-    setSelectedTime(time);
-  };
+  const handleTimeClick = (time) => setSelectedTime(time);
 
   const handleContinue = () => {
     if (selectedDate && selectedTime && selectedDuration) {
@@ -52,7 +52,6 @@ const BookingModal = ({ isOpen, onClose, nutritionist }) => {
         duration: selectedDuration
       };
       console.log('Booking:', bookingData);
-      // Handle booking confirmation
       onClose();
     }
   };
@@ -81,15 +80,26 @@ const BookingModal = ({ isOpen, onClose, nutritionist }) => {
           </div>
           <button className="booking-close-btn" onClick={onClose}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
           </button>
         </div>
 
+        {/* PERSUASIVE DESCRIPTION SECTION */}
+        <div className="booking-description-section">
+          <div className="description-badge">Professional Profile</div>
+          <p className="nutritionist-bio">
+            "{bioDescription}"
+          </p>
+          <div className="trust-indicators">
+             <span><span className="check">✓</span> Verified Expert</span>
+             <span><span className="check">✓</span> 1-on-1 Video Call</span>
+             <span><span className="check">✓</span> Custom Meal Plan</span>
+          </div>
+        </div>
+
         {/* Content */}
         <div className="booking-content">
-          {/* Duration Selection */}
           <div className="booking-section">
             <label className="booking-label">Session Duration</label>
             <div className="duration-options">
@@ -108,7 +118,6 @@ const BookingModal = ({ isOpen, onClose, nutritionist }) => {
             </div>
           </div>
 
-          {/* Date Selection */}
           <div className="booking-section">
             <div className="date-header">
               <button 
@@ -153,65 +162,32 @@ const BookingModal = ({ isOpen, onClose, nutritionist }) => {
             </div>
           </div>
 
-          {/* Time Selection */}
           {selectedDate && (
             <div className="booking-section time-section">
               <label className="booking-label">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                 </svg>
                 Available Times
               </label>
-              <p className="timezone-info">Your timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
+              <p className="timezone-info">Times shown in your local timezone</p>
 
-              {/* Morning */}
-              <div className="time-group">
-                <h4 className="time-group-title">Morning</h4>
-                <div className="time-slots">
-                  {availableTimes.morning.map((time) => (
-                    <button
-                      key={time}
-                      className={`time-slot ${selectedTime === time ? 'selected' : ''}`}
-                      onClick={() => handleTimeClick(time)}
-                    >
-                      {time}
-                    </button>
-                  ))}
+              {Object.entries(availableTimes).map(([period, slots]) => (
+                <div className="time-group" key={period}>
+                  <h4 className="time-group-title">{period}</h4>
+                  <div className="time-slots">
+                    {slots.map((time) => (
+                      <button
+                        key={time}
+                        className={`time-slot ${selectedTime === time ? 'selected' : ''}`}
+                        onClick={() => handleTimeClick(time)}
+                      >
+                        {time}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              {/* Afternoon */}
-              <div className="time-group">
-                <h4 className="time-group-title">Afternoon</h4>
-                <div className="time-slots">
-                  {availableTimes.afternoon.map((time) => (
-                    <button
-                      key={time}
-                      className={`time-slot ${selectedTime === time ? 'selected' : ''}`}
-                      onClick={() => handleTimeClick(time)}
-                    >
-                      {time}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Evening */}
-              <div className="time-group">
-                <h4 className="time-group-title">Evening</h4>
-                <div className="time-slots">
-                  {availableTimes.evening.map((time) => (
-                    <button
-                      key={time}
-                      className={`time-slot ${selectedTime === time ? 'selected' : ''}`}
-                      onClick={() => handleTimeClick(time)}
-                    >
-                      {time}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              ))}
             </div>
           )}
         </div>
@@ -222,12 +198,10 @@ const BookingModal = ({ isOpen, onClose, nutritionist }) => {
             {selectedDate && selectedTime && (
               <>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                 </svg>
                 <span>
-                  {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} 
-                  {' at '} {selectedTime} ({selectedDuration} mins)
+                  {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} at {selectedTime}
                 </span>
               </>
             )}
@@ -237,7 +211,7 @@ const BookingModal = ({ isOpen, onClose, nutritionist }) => {
             onClick={handleContinue}
             disabled={!selectedDate || !selectedTime}
           >
-            Continue
+            Confirm & Continue
           </button>
         </div>
       </div>

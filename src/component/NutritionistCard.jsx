@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import BookingModal from './Bookingmodal';
+import BookingModal from './BookingModal';
 import './NutritionistCard.css';
 
 const NutritionistCard = ({ nutritionist }) => {
@@ -19,8 +19,6 @@ const NutritionistCard = ({ nutritionist }) => {
   const handleCardClick = () => {
     console.log('View nutritionist profile:', id);
     setIsModalOpen(true);
-    // Add navigation logic here if needed
-    // navigate(`/nutritionist/${id}`);
   };
 
   const handleCloseModal = () => {

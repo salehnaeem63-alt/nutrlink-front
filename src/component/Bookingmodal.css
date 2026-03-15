@@ -481,3 +481,96 @@
 .booking-content::-webkit-scrollbar-thumb:hover {
   background: #00b248;
 }
+/* ── Persuasive Description Section ──────────────────────── */
+
+.booking-description-section {
+  padding: 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle background decoration */
+.booking-description-section::before {
+  content: '"';
+  position: absolute;
+  top: -20px;
+  right: 10px;
+  font-size: 120px;
+  color: #f0fdf4; /* Very light green */
+  font-family: serif;
+  z-index: 0;
+}
+
+.description-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1a1a1a; /* Darker for high contrast */
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.nutritionist-bio {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0 0 20px 0;
+  font-weight: 450;
+  position: relative;
+  z-index: 1;
+  max-width: 90%;
+}
+
+/* Trust Bar Design */
+.trust-indicators {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-top: 16px;
+  border-top: 1px dashed #e5e7eb;
+  position: relative;
+  z-index: 1;
+}
+
+.trust-indicators span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #059669; /* Emerald Green */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ecfdf5;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.trust-indicators .check {
+  font-size: 14px;
+  color: #10b981;
+}
+
+/* Mobile Tweak */
+@media (max-width: 480px) {
+  .booking-description-section {
+    padding: 20px 16px;
+  }
+  
+  .nutritionist-bio {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .trust-indicators {
+    gap: 10px;
+  }
+}

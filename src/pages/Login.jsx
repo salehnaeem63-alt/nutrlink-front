@@ -51,9 +51,9 @@ const Login = () => {
 
       // ── Redirect based on role ───────────────────────
       if (response.role === 'nutritionist') {
-        navigate('/Nprofile');
+        navigate('/Nhome');
       } else {
-        navigate('/profile');                            // ← CHANGED (was /dashboard)
+        navigate('/home');                            // ← CHANGED (was /dashboard)
       }
       // ────────────────────────────────────────────────
 

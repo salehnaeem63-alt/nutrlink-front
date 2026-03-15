@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './Home.css';
-import Navbar from '../component/Navbar';
+import './NHome.css';
+import Navbar from '../component/Nnavbar';
 import FilterBar from '../component/FilterBar';
 import NutritionistCard from '../component/NutritionistCard';
 
-const Home = () => {
+const Nhome = () => {
   const navigate = useNavigate();
   const isLogin = !!localStorage.getItem("authToken");
 
@@ -62,7 +62,7 @@ const Home = () => {
   };
 
   return (
-    <div className="home-page">
+    <div className="nhome-page">
       <Navbar 
         isLogin={isLogin} 
         onLogout={handleLogout} 
@@ -93,11 +93,8 @@ const Home = () => {
                 </>
               ) : (
                 <>
-                  <Link to="/Dashboard">
-                    <button className="btn-primary">Go to Dashboard</button>
-                  </Link>
-                  <Link to="/nutritionists">
-                    <button className="btn-secondary">Find Nutritionists</button>
+                  <Link to="/NutritionistAppointments">
+                    <button className="btn-primary">Go to Appointment</button>
                   </Link>
                 </>
               )}
@@ -260,4 +257,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Nhome;

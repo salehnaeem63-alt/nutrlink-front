@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
-import './Navbar.css';
+import './Nnavbar.css';
 
 const DEFAULT_LINKS = [
-  { label: 'Home',       to: '/home' },
-  { label: 'Dashboard',  to: '/Dashboard' },
-  { label: 'Profile',    to: '/Profile' },
+  { label: 'Home',       to: '/Nhome' },
+  { label: 'Appointments',  to: '/Appointments' },
+  { label: 'Profile',    to: '/NProfile' },
   { label: 'calculator', to: '/calculetor' },
 ];
 
-const Navbar = ({ links = DEFAULT_LINKS, ctaLabel = '', onCtaClick, isLogin, onLogout }) => (
+const Nnavbar = ({ links = DEFAULT_LINKS, ctaLabel = '', onCtaClick, isLogin, onLogout }) => (
   <nav className="navbar">
     <div className="navbar__inner">
 
@@ -47,4 +47,4 @@ const Navbar = ({ links = DEFAULT_LINKS, ctaLabel = '', onCtaClick, isLogin, onL
   </nav>
 );
 
-export default Navbar;
+export default Nnavbar;
