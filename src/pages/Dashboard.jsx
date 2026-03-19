@@ -9,7 +9,8 @@ import {
   getsammury,
   getlogs,
   getlogtoday,
-  creatlog
+  creatlog,
+  getCustomerAppointments
 } from "../api/progressApi";
 import './Dashboard.css';
 
@@ -19,6 +20,7 @@ const Dashboard = () => {
   const [goals, setGoals] = useState([]);
   const [dietPlan, setDietPlan] = useState(null);
   const [logHistory, setLogHistory] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newGoal, setNewGoal] = useState('');
   const [showGoalInput, setShowGoalInput] = useState(false);
@@ -43,18 +45,21 @@ const Dashboard = () => {
       setLoading(true);
       
       // Fetch all data
-      const [summaryData, todayData, goalsData, logsData] = await Promise.all([
+      const [summaryData, todayData, goalsData, logsData, appointmentsData] = await Promise.all([
         getsammury(),
         getlogtoday().catch(() => ({ log: null })),
         getGoal().catch(() => ({ goals: [] })),
-        getlogs(chartPeriod).catch(() => ({ logs: [] })) // Use selected period
+        getlogs(chartPeriod).catch(() => ({ logs: [] })), // Use selected period
+        getCustomerAppointments().catch(() => ({ appointments: [] }))
       ]);
 
       console.log('Summary Data:', summaryData); // Debug
+      console.log('Appointments Data:', appointmentsData); // Debug
       setSummary(summaryData.summary);
       setTodayLog(todayData.log || summaryData.summary?.todayLog || null);
       setGoals(goalsData.goals || []);
       setLogHistory(logsData.logs || []);
+      setAppointments(appointmentsData.appointments || []);
       
       // Get diet plan if available
       try {
@@ -321,23 +326,25 @@ const Dashboard = () => {
             {/* Next Appointment */}
             <div className="dashboard__card next-appointment-card">
               <h2>Next Appointment</h2>
-              {summary?.nextAppointment ? (
+              {appointments && appointments.length > 0 ? (
                 <div className="appointment-details">
                   <div className="appointment-nutritionist">
                     <div className="nutritionist-avatar nutritionist-avatar--small">
-                      {summary.nextAppointment.nutritionistId?.username?.charAt(0).toUpperCase() || 'N'}
+                      {appointments[0].nutritionistId?.username?.charAt(0).toUpperCase() || 'N'}
                     </div>
                     <div>
                       <p className="appointment-name">
-                        {summary.nextAppointment.nutritionistId?.username || 'Nutritionist'}
+                        {appointments[0].nutritionistId?.username || 'Nutritionist'}
                       </p>
-                      <span className="appointment-status">Booked</span>
+                      <span className={`appointment-status appointment-status--${appointments[0].status?.toLowerCase() || 'booked'}`}>
+                        {appointments[0].status || 'Booked'}
+                      </span>
                     </div>
                   </div>
                   <div className="appointment-datetime">
                     <div className="appointment-date">
                       <span className="appointment-icon">📅</span>
-                      <span>{new Date(summary.nextAppointment.date).toLocaleDateString('en-US', { 
+                      <span>{new Date(appointments[0].date).toLocaleDateString('en-US', { 
                         month: 'short', 
                         day: 'numeric', 
                         year: 'numeric' 
@@ -345,12 +352,16 @@ const Dashboard = () => {
                     </div>
                     <div className="appointment-time">
                       <span className="appointment-icon">🕐</span>
-                      <span>{new Date(summary.nextAppointment.date).toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                      })}</span>
+                      <span>{appointments[0].timeSlot || 'Time TBD'}</span>
                     </div>
                   </div>
+                  {appointments.length > 1 && (
+                    <div className="appointment-count">
+                      <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '0.75rem 0 0 0', textAlign: 'center' }}>
+                        + {appointments.length - 1} more appointment{appointments.length - 1 > 1 ? 's' : ''}
+                      </p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="empty-state">

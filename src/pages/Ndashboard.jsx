@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { nutritionistChartData, nutritionistDashboardStats, getProfile } from "../api/nDashboard";
+import { nutritionistChartData, nutritionistDashboardStats, getProfile, getNutritionistSchedule } from "../api/nDashboard";
 import Navbar from "../component/Navbar";
 import './Ndashboard.css';
 
@@ -7,43 +7,10 @@ export const Ndashboard = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [stats, setStats] = useState(null);
-  const [, setChartData] = useState(null);
-  
-  // Mock data for appointments (replace with API later)
-  const [todayAppointments] = useState([
-    {
-      id: 1,
-      time: "10:00 AM - 11:00 AM",
-      clientName: "Ahmad Ali",
-      clientAvatar: "A",
-      sessionType: "Keto Plan",
-      status: "Booked"
-    },
-    {
-      id: 2,
-      time: "2:00 PM - 3:00 PM",
-      clientName: "Sarah Johnson",
-      clientAvatar: "S",
-      sessionType: "Weight Loss",
-      status: "Booked"
-    },
-    {
-      id: 3,
-      time: "4:30 PM - 5:30 PM",
-      clientName: "Osama Khan",
-      clientAvatar: "O",
-      sessionType: "General Consult",
-      status: "Booked"
-    }
-  ]);
-
-  const [upcomingSessions] = useState([
-    { date: "Mar 4, 9:00 AM", client: "Lina Chen", type: "Weight Loss" },
-    { date: "Mar 4, 11:30 AM", client: "Qianna Khan", type: "Follow-up" },
-    { date: "Mar 5, 2:00 PM", client: "Sarah Johnson", type: "Meal Plan" },
-    { date: "Mar 6, 10:00 AM", client: "Ahmad Ali", type: "Keto Review" },
-    { date: "Mar 9, 3:30 PM", client: "John Doe", type: "Consult" }
-  ]);
+  const [chartData, setChartData] = useState([]);
+  const [todayAppointments, setTodayAppointments] = useState([]);
+  const [upcomingSessions, setUpcomingSessions] = useState([]);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -52,15 +19,44 @@ export const Ndashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const [profileData, statsData, chartDataRes] = await Promise.all([
-        getProfile(),
-        nutritionistDashboardStats(),
-        nutritionistChartData()
+      
+      const [profileData, statsData, chartDataRes, scheduleData] = await Promise.all([
+        getProfile().catch(() => null),
+        nutritionistDashboardStats().catch(() => null),
+        nutritionistChartData().catch(() => ({ data: [] })),
+        getNutritionistSchedule().catch(() => ({ schedule: [] }))
       ]);
       
+      console.log('Profile:', profileData);
+      console.log('Stats:', statsData);
+      console.log('Chart:', chartDataRes);
+      console.log('Schedule:', scheduleData);
+      
       setProfile(profileData);
-      setStats(statsData);
-      setChartData(chartDataRes);
+      setStats(statsData?.stats || null);
+      setChartData(chartDataRes?.data || []);
+      
+      // Filter today's appointments from schedule
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const todaysAppts = (scheduleData?.schedule || []).filter(appt => {
+        const apptDate = new Date(appt.date);
+        apptDate.setHours(0, 0, 0, 0);
+        return apptDate.getTime() === today.getTime() && appt.status === 'booked';
+      });
+      
+      // Get upcoming appointments (future dates, booked status)
+      const upcomingAppts = (scheduleData?.schedule || [])
+        .filter(appt => {
+          const apptDate = new Date(appt.date);
+          return apptDate > today && appt.status === 'booked';
+        })
+        .sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date
+      
+      setTodayAppointments(todaysAppts);
+      setUpcomingSessions(upcomingAppts);
+      
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -87,24 +83,21 @@ export const Ndashboard = () => {
     );
   }
 
-  // Mock stats data (replace with API data when available)
-  const statsDisplay = stats || {
-    totalClients: 120,
-    clientsGrowth: 15,
-    avgRating: 4.8,
-    totalReviews: 45,
-    experience: 5,
-    specialization: "Keto/Weight Loss",
-    todaySessions: 3,
-    nextSession: "10:00 AM"
-  };
-
   const currentDate = new Date().toLocaleDateString('en-US', { 
     weekday: 'long', 
     month: 'long', 
     day: 'numeric', 
     year: 'numeric' 
   });
+
+  // Month names for chart
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  // Calculate max value for chart scaling
+  const maxValue = Math.max(
+    ...chartData.map(m => Math.max(m.completedAppointments || 0, m.uniqueCustomer || 0)),
+    5 // Minimum scale
+  );
 
   return (
     <div className="ndashboard">
@@ -120,11 +113,11 @@ export const Ndashboard = () => {
           <div className="header-right">
             <div className="profile-badge">
               <div className="profile-badge__info">
-                <p className="profile-badge__name">{profile?.user?.username || 'Sarah Miller'}</p>
+                <p className="profile-badge__name">{profile?.user?.username || 'Nutritionist'}</p>
                 <p className="profile-badge__role">Registered Nutritionist</p>
               </div>
               <div className="profile-badge__avatar">
-                {profile?.user?.username?.charAt(0).toUpperCase() || 'S'}
+                {profile?.user?.username?.charAt(0).toUpperCase() || 'N'}
               </div>
             </div>
           </div>
@@ -136,8 +129,8 @@ export const Ndashboard = () => {
             <div className="stat-icon">👥</div>
             <div className="stat-content">
               <p className="stat-label">Total Clients Served</p>
-              <p className="stat-value">{statsDisplay.totalClients}</p>
-              <p className="stat-subtext">+{statsDisplay.clientsGrowth}% this month</p>
+              <p className="stat-value">{stats?.clientServed || 0}</p>
+              <p className="stat-subtext">+{stats?.thisMonthCount || 0} this month</p>
             </div>
           </div>
 
@@ -145,8 +138,8 @@ export const Ndashboard = () => {
             <div className="stat-icon">⭐</div>
             <div className="stat-content">
               <p className="stat-label">Average Rating</p>
-              <p className="stat-value">{statsDisplay.avgRating} ⭐</p>
-              <p className="stat-subtext">based on {statsDisplay.totalReviews} reviews</p>
+              <p className="stat-value">{stats?.rating || 0} ⭐</p>
+              <p className="stat-subtext">based on {stats?.reviewCount || 0} reviews</p>
             </div>
           </div>
 
@@ -154,8 +147,8 @@ export const Ndashboard = () => {
             <div className="stat-icon">🎓</div>
             <div className="stat-content">
               <p className="stat-label">Experience</p>
-              <p className="stat-value">{statsDisplay.experience} Years</p>
-              <p className="stat-subtext">{statsDisplay.specialization}</p>
+              <p className="stat-value">{stats?.yearsOfExperience || 0} Years</p>
+              <p className="stat-subtext">{profile?.specialization?.[0] || 'Nutrition Expert'}</p>
             </div>
           </div>
 
@@ -163,8 +156,13 @@ export const Ndashboard = () => {
             <div className="stat-icon">📅</div>
             <div className="stat-content">
               <p className="stat-label">Today's Agenda</p>
-              <p className="stat-value">{statsDisplay.todaySessions} Sessions</p>
-              <p className="stat-subtext">Next: {statsDisplay.nextSession}</p>
+              <p className="stat-value">{stats?.todayCount || todayAppointments.length} Sessions</p>
+              <p className="stat-subtext">
+                {todayAppointments.length > 0 
+                  ? `Next: ${todayAppointments[0].timeSlot.split(' - ')[0]}`
+                  : 'No sessions today'
+                }
+              </p>
             </div>
           </div>
         </div>
@@ -176,12 +174,12 @@ export const Ndashboard = () => {
           <div className="ndashboard__card schedule-card">
             <h2>Today's Schedule ({new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })})</h2>
             
-            <div className="appointments-list">
+            <div className="appointments-list appointments-list--scrollable">
               {todayAppointments.length > 0 ? (
                 todayAppointments.map((appointment) => (
-                  <div key={appointment.id} className="appointment-item">
+                  <div key={appointment._id} className="appointment-item">
                     <div className="appointment-time">
-                      <p className="time-slot">{appointment.time}</p>
+                      <p className="time-slot">{appointment.timeSlot}</p>
                       <span className={`status-badge status-badge--${appointment.status.toLowerCase()}`}>
                         {appointment.status}
                       </span>
@@ -189,24 +187,24 @@ export const Ndashboard = () => {
                     
                     <div className="appointment-client">
                       <div className="client-avatar">
-                        {appointment.clientAvatar}
+                        {appointment.customerId?.username?.charAt(0).toUpperCase() || 'C'}
                       </div>
                       <div className="client-info">
-                        <p className="client-name">{appointment.clientName}</p>
-                        <p className="session-type">{appointment.sessionType}</p>
+                        <p className="client-name">{appointment.customerId?.username || 'Client'}</p>
+                        <p className="session-type">Consultation</p>
                       </div>
                     </div>
                     
                     <div className="appointment-actions">
                       <button 
                         className="btn btn--primary"
-                        onClick={() => handleStartSession(appointment.id)}
+                        onClick={() => handleStartSession(appointment._id)}
                       >
                         Start Session
                       </button>
                       <button 
                         className="btn btn--secondary"
-                        onClick={() => handleCancelAppointment(appointment.id)}
+                        onClick={() => handleCancelAppointment(appointment._id)}
                       >
                         Cancel
                       </button>
@@ -219,6 +217,13 @@ export const Ndashboard = () => {
                 </div>
               )}
             </div>
+            
+            <button 
+              className="btn btn--outline btn--full"
+              onClick={() => setShowScheduleModal(true)}
+            >
+              View Full Schedule
+            </button>
           </div>
 
           {/* Right Column */}
@@ -230,31 +235,34 @@ export const Ndashboard = () => {
               
               <div className="chart-container">
                 <div className="chart-bars">
-                  {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month, index) => {
-                    // Mock data - replace with actual chartData
-                    const appointments = Math.floor(Math.random() * 20) + 5;
-                    const clients = Math.floor(Math.random() * 15) + 5;
-                    const maxValue = 25;
+                  {Array.from({ length: 12 }, (_, i) => {
+                    const monthData = chartData.find(m => m._id === i + 1) || {};
+                    const appointments = monthData.completedAppointments || 0;
+                    const clients = monthData.uniqueCustomer || 0;
+                    
+                    const appointmentsHeight = appointments > 0 ? (appointments / maxValue) * 100 : 10;
+                    const clientsHeight = clients > 0 ? (clients / maxValue) * 100 : 10;
                     
                     return (
-                      <div key={month} className="chart-bar-group">
+                      <div key={i} className="chart-bar-group">
                         <div className="chart-bars-wrapper">
                           <div 
-                            className="chart-bar chart-bar--appointments"
-                            style={{ height: `${(appointments / maxValue) * 100}%` }}
+                            className={`chart-bar ${appointments > 0 ? 'chart-bar--appointments' : 'chart-bar--appointments chart-bar--zero'}`}
+                            style={{ height: `${appointmentsHeight}%` }}
                             title={`${appointments} appointments`}
                           >
-                            <span className="bar-label">{appointments}</span>
+                            {appointments > 0 && <span className="bar-label">{appointments}</span>}
                           </div>
+                          
                           <div 
-                            className="chart-bar chart-bar--clients"
-                            style={{ height: `${(clients / maxValue) * 100}%` }}
+                            className={`chart-bar ${clients > 0 ? 'chart-bar--clients' : 'chart-bar--clients chart-bar--zero'}`}
+                            style={{ height: `${clientsHeight}%` }}
                             title={`${clients} unique clients`}
                           >
-                            <span className="bar-label">{clients}</span>
+                            {clients > 0 && <span className="bar-label">{clients}</span>}
                           </div>
                         </div>
-                        <p className="chart-month">{month}</p>
+                        <p className="chart-month">{monthNames[i]}</p>
                       </div>
                     );
                   })}
@@ -272,28 +280,52 @@ export const Ndashboard = () => {
                 </div>
               </div>
             </div>
-
-            {/* Upcoming Sessions */}
-            <div className="ndashboard__card upcoming-card">
-              <h2>Upcoming Sessions (Next 5)</h2>
-              <p className="upcoming-subtitle">Strictly starting strictly tomorrow (March 4, 2026)</p>
-              
-              <div className="upcoming-list">
-                {upcomingSessions.map((session, index) => (
-                  <div key={index} className="upcoming-item">
-                    <span className="upcoming-date">{session.date}</span>
-                    <span className="upcoming-client">{session.client}</span>
-                    <span className="upcoming-type">{session.type}</span>
-                  </div>
-                ))}
-              </div>
-              
-              <button className="btn btn--outline btn--full">
-                View Full Schedule
-              </button>
-            </div>
           </div>
         </div>
+
+        {/* Full Schedule Modal */}
+        {showScheduleModal && (
+          <div className="modal-overlay" onClick={() => setShowScheduleModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>All Upcoming Sessions ({upcomingSessions.length})</h2>
+                <button 
+                  className="modal-close"
+                  onClick={() => setShowScheduleModal(false)}
+                >
+                  ✕
+                </button>
+              </div>
+              
+              <div className="modal-body">
+                <p className="upcoming-subtitle">Booked appointments</p>
+                
+                <div className="upcoming-list">
+                  {upcomingSessions.length > 0 ? (
+                    upcomingSessions.map((session) => (
+                      <div key={session._id} className="upcoming-item">
+                        <span className="upcoming-date">
+                          {new Date(session.date).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric' 
+                          })}, {session.timeSlot.split(' - ')[0]}
+                        </span>
+                        <span className="upcoming-client">
+                          {session.customerId?.username || 'Client'}
+                        </span>
+                        <span className="upcoming-type">{session.status}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="empty-state">
+                      <p>No upcoming sessions</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

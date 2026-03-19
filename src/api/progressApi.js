@@ -266,3 +266,32 @@ export async function getdite(info) {
     throw error;
   }
 }
+
+
+export async function getCustomerAppointments() {
+    const token = localStorage.getItem("authToken");
+ 
+    try {
+        const res = await fetch(
+            "http://localhost:5000/nutrlink/api/appointments/customer-appointments",
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+ 
+        const data = await res.json();
+ 
+        if (!res.ok) {
+            throw new Error(data.message || "Failed to get customer appointments");
+        }
+ 
+        return data;
+ 
+    } catch (error) {
+        console.error("Error getting customer appointments:", error);
+        throw error;
+    }
+}
+ 

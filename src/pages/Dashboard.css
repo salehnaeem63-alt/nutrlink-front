@@ -337,6 +337,27 @@
   color: #10b981;
   border-radius: 12px;
   font-weight: 600;
+  text-transform: capitalize;
+}
+
+.appointment-status--booked {
+  background: #d1fae5;
+  color: #10b981;
+}
+
+.appointment-status--completed {
+  background: #dbeafe;
+  color: #3b82f6;
+}
+
+.appointment-status--cancelled {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.appointment-status--pending {
+  background: #fef3c7;
+  color: #f59e0b;
 }
 
 .appointment-datetime {
@@ -360,6 +381,20 @@
 
 .appointment-icon {
   font-size: 1.25rem;
+}
+
+.appointment-count {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.appointment-count p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  text-align: center;
+  font-weight: 500;
 }
 
 .progress-bar {
@@ -470,7 +505,7 @@
 .bar-group-container {
   display: flex;
   align-items: flex-end; /* important */
-  gap: 6px;
+  gap: 0px;
   height: calc(100% - 40px);
   width: 100%;
   justify-content: center;
@@ -539,12 +574,6 @@
   text-align: center;
   white-space: nowrap;
 }
-
-.bar-group__date--top {
-  order: -1;
-  margin-bottom: 4px;
-}
-
 /* Chart Legend */
 .chart-legend {
   display: flex;
