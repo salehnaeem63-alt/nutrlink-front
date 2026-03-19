@@ -3,12 +3,33 @@
    ───────────────────────────────────────────── */
 
 .navbar {
-  background: var(--color-surface);
+  background-color: rgba(255, 255, 255, 0.8) !important; 
+  
+  backdrop-filter: blur(8px); 
+  -webkit-backdrop-filter: blur(8px); 
+  
   box-shadow: var(--shadow-navbar);
   position: sticky;
   top: 0;
   z-index: 100;
   min-height: 70px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.navbar__inner {
+  /* 1. Alignment Logic (Matches your Hero Section) */
+  max-width: 1200px !important; 
+  margin: 0 auto !important;
+  width: 90% !important; 
+
+  /* 2. Visual Fix: Adds vertical breathing room */
+  padding: 16px 20px !important; 
+
+  /* 3. Layout Logic */
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  height: 100% !important;
 }
 
 .navbar__inner {
@@ -18,8 +39,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: transparent;
 }
-
 /* ── Brand ── */
 .navbar__brand {
   display: flex;
@@ -39,7 +60,8 @@
 }
 
 .navbar__brand-icon svg {
-  display: block; /* Removes the 'inline' baseline spacing */
+  display: block;
+  /* Removes the 'inline' baseline spacing */
 }
 
 /* ── Links ── */
@@ -110,7 +132,7 @@
 
 /* ── Add this to the bottom of your Navbar.css ── */
 
-.navbar__logout {
+/* .navbar__logout {
   background: #ef4444;
   color: #ffffff;
   font-size: 0.88rem;
@@ -126,7 +148,7 @@
 
 .navbar__logout:active {
   transform: translateY(0);
-}
+} */
 
 .nav-link-text {
   text-decoration: none;

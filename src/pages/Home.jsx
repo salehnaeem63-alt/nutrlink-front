@@ -54,186 +54,188 @@ const Home = () => {
   const handleFilterChange = (filters) => console.log('Filters changed:', filters);
 
   return (
-    <div className="home-page">
-      <Navbar
-        isLogin={isLogin}
-        onLogout={onLogoutClick}
-        ctaLabel={!isLogin ? "Get Started" : ""}
-        onCtaClick={handleCtaClick}
-      />
+    <div className="container">
+      <div className="home-page">
+        <Navbar
+          isLogin={isLogin}
+          onLogout={onLogoutClick}
+          ctaLabel={!isLogin ? "Get Started" : ""}
+          onCtaClick={handleCtaClick}
+        />
 
-      {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-content">
-          <div className="hero-text">
-            {/* Dynamic Greeting */}
-            {user?.username && (
-              <p className="user-greeting">
-                Welcome back, {user.username}! 👋
+        {/* Hero Section */}
+        <section className="hero-section">
+          <div className="hero-content">
+            <div className="hero-text">
+              {/* Dynamic Greeting */}
+              {user?.username && (
+                <p className="user-greeting">
+                  Welcome back, {user.username}! 👋
+                </p>
+              )}
+
+              {/* Typetwriter AI Feed */}
+              <div className="typewriter-container">
+                <span className="typewriter-label"></span>
+                <Typewriter
+                  options={{
+                    strings: [
+                      'Making your life better',
+                      'Connecting you with experts',
+                      'Personalizing your diet',
+                      'Tracking your progress',
+                      'Achieving your weight goals',
+                      'Smart food tracking',
+                      'Achieving your weight goals'
+                    ],
+                    autoStart: true,
+                    loop: true,
+                    deleteSpeed: 50,
+                    delay: 75,
+                    cursor: '_'
+                  }}
+                />
+              </div>
+
+              <h1 className="hero-title">
+                Your Journey to <span style={{ whiteSpace: 'nowrap' }} className="text-green">Better Health</span> Starts Here
+              </h1>
+
+              <p className="hero-description">
+                Connect with expert nutritionists, track your diet, and achieve your wellness goals with our AI-powered platform.
               </p>
-            )}
 
-            {/* Typewriter AI Feed */}
-            <div className="typewriter-container">
-              <span className="typewriter-label"></span>
-              <Typewriter
-                options={{
-                  strings: [
-                    'Making your life better',
-                    'Connecting you with experts',
-                    'Personalizing your diet',
-                    'Tracking your progress',
-                    'Achieving your weight goals',
-                    'Smart food tracking',
-                    'Achieving your weight goals'
-                  ],
-                  autoStart: true,
-                  loop: true,
-                  deleteSpeed: 50,
-                  delay: 75,
-                  cursor: '_'
-                }}
+              <div className="hero-buttons">
+                {!isLogin ? (
+                  <>
+                    <Link to="/RegisterType"><button className="btn-primary">Get Started</button></Link>
+                    <Link to="/nutritionists"><button className="btn-secondary">Book Appointment</button></Link>
+                  </>
+                ) : (
+                  <>
+                    <Link to={user?.role === 'nutritionist' ? '/Ndashboard' : '/Dashboard'}>
+                      <button className="btn-primary">Go to Dashboard</button>
+                    </Link>
+                    <Link to="/nutritionists"><button className="btn-secondary">Find Nutritionists</button></Link>
+                  </>
+                )}
+              </div>
+
+              <div className="stats-container">
+                <div className="stat-item">
+                  <h3><CountUp className='stat-number' end={10} duration={3} />K+</h3>
+                  <p className='stat-label'>Happy Clients</p>
+                </div>
+                <div className="stat-item">
+                  <h3><CountUp className='stat-number' end={500} duration={3} />+</h3>
+                  <p className='stat-label'>Nutritionists</p>
+                </div>
+                <div className="stat-item">
+                  <h3><CountUp className='stat-number' end={95} duration={3} />%</h3>
+                  <p className="stat-label">Success Rate</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="hero-image">
+              <img
+                src="https://img.freepik.com/premium-photo/laptop-desk-nutritionists-office-with-healthy-food-displays_1170794-294316.jpg"
+                alt="Healthy Food"
+                className="food-image"
               />
             </div>
-
-            <h1 className="hero-title">
-              Your Journey to <span style={{ whiteSpace: 'nowrap' }} className="text-green">Better Health</span> Starts Here
-            </h1>
-
-            <p className="hero-description">
-              Connect with expert nutritionists, track your diet, and achieve your wellness goals with our AI-powered platform.
-            </p>
-
-            <div className="hero-buttons">
-              {!isLogin ? (
-                <>
-                  <Link to="/RegisterType"><button className="btn-primary">Get Started</button></Link>
-                  <Link to="/nutritionists"><button className="btn-secondary">Book Appointment</button></Link>
-                </>
-              ) : (
-                <>
-                  <Link to={user?.role === 'nutritionist' ? '/Ndashboard' : '/Dashboard'}>
-                    <button className="btn-primary">Go to Dashboard</button>
-                  </Link>
-                  <Link to="/nutritionists"><button className="btn-secondary">Find Nutritionists</button></Link>
-                </>
-              )}
-            </div>
-
-            <div className="stats-container">
-              <div className="stat-item">
-                <h3><CountUp className='stat-number' end={10} duration={3} />K+</h3>
-                <p className='stat-label'>Happy Clients</p>
-              </div>
-              <div className="stat-item">
-                <h3><CountUp className='stat-number' end={500} duration={3} />+</h3>
-                <p className='stat-label'>Nutritionists</p>
-              </div>
-              <div className="stat-item">
-                <h3><CountUp className='stat-number' end={95} duration={3} />%</h3>
-                <p className="stat-label">Success Rate</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="hero-image">
-            <img
-              src="https://img.freepik.com/premium-photo/laptop-desk-nutritionists-office-with-healthy-food-displays_1170794-294316.jpg"
-              alt="Healthy Food"
-              className="food-image"
-            />
-          </div>
-        </div>
-      </section>
-
-      <FilterBar onFilterChange={handleFilterChange} />
-
-      <section className="featured-section">
-        <div className="section-header">
-          <h2 className="section-title">Available Nutritionists</h2>
-        </div>
-        <div className="nutritionists-grid">
-          {currentNutritionists.map((nutritionist) => (
-            <NutritionistCard key={nutritionist.id} nutritionist={nutritionist} />
-          ))}
-        </div>
-        <div className="pagination">
-          <button className="pagination-arrow" onClick={handlePrevPage} disabled={currentPage === 1}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
-          </button>
-          {[...Array(totalPages)].map((_, i) => (
-            <button key={i} className={`pagination-number ${currentPage === i + 1 ? 'active' : ''}`} onClick={() => setCurrentPage(i + 1)}>
-              {i + 1}
-            </button>
-          ))}
-          <button className="pagination-arrow" onClick={handleNextPage} disabled={currentPage === totalPages}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>
-          </button>
-        </div>
-      </section>
-
-      <section className="features-section">
-        <h2 className="section-title">Everything You Need for a Healthier Life</h2>
-        <p className="section-subtitle">Comprehensive tools and expert support at your fingertips</p>
-        <div className="features-grid">
-          <div className="feature-card">
-            <div className="feature-icon green">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /></svg>
-            </div>
-            <h3 className="feature-title">Expert Nutritionists</h3>
-            <p className="feature-description">Connect with certified professionals tailored to your needs</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon blue">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
-            </div>
-            <h3 className="feature-title">Meal Plans</h3>
-            <p className="feature-description">Custom meal plans designed for your specific goals</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon purple">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
-            </div>
-            <h3 className="feature-title">Progress Tracking</h3>
-            <p className="feature-description">Monitor your journey with detailed analytics</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon orange">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-            </div>
-            <h3 className="feature-title">24/7 AI Assistant</h3>
-            <p className="feature-description">Get instant answers to your nutrition questions</p>
-          </div>
-        </div>
-      </section>
-
-      {!isLogin && (
-        <section className="cta-section">
-          <div className="cta-content">
-            <h2 className="cta-title">Ready to Transform Your Health?</h2>
-            <button className="cta-button" onClick={handleCtaClick}>Start Your Journey Today</button>
           </div>
         </section>
-      )}
 
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-section">
-            <h3 className="footer-title">Nutrilink</h3>
-            <p className="footer-text">Empowering health through technology.</p>
+        <FilterBar onFilterChange={handleFilterChange} />
+
+        <section className="featured-section">
+          <div className="section-header">
+            <h2 className="section-title">Available Nutritionists</h2>
           </div>
-          <div className="footer-section">
-            <h4 className="footer-title">Links</h4>
-            <ul className="footer-links">
-              <li><Link to="/nutritionists">Find Experts</Link></li>
-              <li><Link to="/about">About Us</Link></li>
-            </ul>
+          <div className="nutritionists-grid">
+            {currentNutritionists.map((nutritionist) => (
+              <NutritionistCard key={nutritionist.id} nutritionist={nutritionist} />
+            ))}
           </div>
-        </div>
-        <div className="footer-bottom">
-          <p>&copy; 2026 Nutrilink. All rights reserved.</p>
-        </div>
-      </footer>
+          <div className="pagination">
+            <button className="pagination-arrow" onClick={handlePrevPage} disabled={currentPage === 1}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
+            </button>
+            {[...Array(totalPages)].map((_, i) => (
+              <button key={i} className={`pagination-number ${currentPage === i + 1 ? 'active' : ''}`} onClick={() => setCurrentPage(i + 1)}>
+                {i + 1}
+              </button>
+            ))}
+            <button className="pagination-arrow" onClick={handleNextPage} disabled={currentPage === totalPages}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>
+            </button>
+          </div>
+        </section>
+
+        <section className="features-section">
+          <h2 className="section-title">Everything You Need for a Healthier Life</h2>
+          <p className="section-subtitle">Comprehensive tools and expert support at your fingertips</p>
+          <div className="features-grid">
+            <div className="feature-card">
+              <div className="feature-icon green">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /></svg>
+              </div>
+              <h3 className="feature-title">Expert Nutritionists</h3>
+              <p className="feature-description">Connect with certified professionals tailored to your needs</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon blue">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+              </div>
+              <h3 className="feature-title">Meal Plans</h3>
+              <p className="feature-description">Custom meal plans designed for your specific goals</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon purple">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+              </div>
+              <h3 className="feature-title">Progress Tracking</h3>
+              <p className="feature-description">Monitor your journey with detailed analytics</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon orange">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+              </div>
+              <h3 className="feature-title">24/7 AI Assistant</h3>
+              <p className="feature-description">Get instant answers to your nutrition questions</p>
+            </div>
+          </div>
+        </section>
+
+        {!isLogin && (
+          <section className="cta-section">
+            <div className="cta-content">
+              <h2 className="cta-title">Ready to Transform Your Health?</h2>
+              <button className="cta-button" onClick={handleCtaClick}>Start Your Journey Today</button>
+            </div>
+          </section>
+        )}
+
+        <footer className="footer">
+          <div className="footer-content">
+            <div className="footer-section">
+              <h3 className="footer-title">Nutrilink</h3>
+              <p className="footer-text">Empowering health through technology.</p>
+            </div>
+            <div className="footer-section">
+              <h4 className="footer-title">Links</h4>
+              <ul className="footer-links">
+                <li><Link to="/nutritionists">Find Experts</Link></li>
+                <li><Link to="/about">About Us</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p>&copy; 2026 Nutrilink. All rights reserved.</p>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 };
