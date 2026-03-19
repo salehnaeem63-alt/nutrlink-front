@@ -166,6 +166,7 @@ const Register = () => {
             onChange={handleChange}
             placeholder="John Doe"
             required
+            autoFocus
           />
 
           <FormField

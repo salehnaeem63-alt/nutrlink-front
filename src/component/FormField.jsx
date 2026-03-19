@@ -9,7 +9,7 @@ import './FormField.css';
  *   id          – string (links label → input)
  *   ...rest     – forwarded to <input>  (type, name, value, onChange, placeholder, required, …)
  */
-const FormField = ({ label, icon, id, ...inputProps }) => (
+const FormField = ({ label, icon, id, rightIcon, onRightIconClick, ...inputProps }) => (
   <div className="form-field">
     {label && (
       <label className="form-field__label" htmlFor={id}>
@@ -23,6 +23,14 @@ const FormField = ({ label, icon, id, ...inputProps }) => (
         className="form-field__input"
         {...inputProps}
       />
+      {rightIcon && (
+        <button
+          type="button"
+          className='form-field__icon-right'
+          onClick={onRightIconClick}>
+          {rightIcon}
+        </button>
+      )}
     </div>
   </div>
 );

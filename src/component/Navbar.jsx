@@ -1,50 +1,55 @@
 import { Link } from 'react-router-dom';
 import './Navbar.css';
+import { NutrlinkLogo } from './Icons';
 
-const DEFAULT_LINKS = [
-  { label: 'Home',       to: '/home' },
-  { label: 'Dashboard',  to: '/Dashboard' },
-  { label: 'Profile',    to: '/Profile' },
-  { label: 'calculator', to: '/calculetor' },
-];
+const Navbar = ({ isLogin, onLogout }) => {
+  // 1. Data Definition: The "Source of Truth"
+  const NAV_MAP = [
+    { label: 'Home',       to: '/',            isPublic: true },
+    { label: 'Dashboard',  to: '/dashboard',   isPublic: false },
+    { label: 'Profile',    to: '/profile',     isPublic: false },
+    { label: 'Calculator', to: '/calculator',  isPublic: true },
+  ];
 
-const Navbar = ({ links = DEFAULT_LINKS, ctaLabel = '', onCtaClick, isLogin, onLogout }) => (
-  <nav className="navbar">
-    <div className="navbar__inner">
+  // 2. Logic: Filtering based on Auth State
+  const visibleLinks = NAV_MAP.filter(link => link.isPublic || isLogin);
 
-      {/* Brand */}
-      <Link to="/" className="navbar__brand">
-        <div className="navbar__brand-icon">N</div>
-        <span>Nutrlink</span>
-      </Link>
+  return (
+    <nav className="navbar">
+      <div className="navbar__inner">
+        
+        {/* Brand Section */}
+        <Link to="/" className="navbar__brand">
+          <div className="navbar__brand-icon"> <NutrlinkLogo/></div>
+          <span>Nutrlink</span>
+        </Link>
 
-      {/* Nav links */}
-      <ul className="navbar__links">
-        {links.map(({ label, to, href }) => (
-          <li key={label}>
-            {to
-              ? <Link to={to}>{label}</Link>
-              : <a href={href}>{label}</a>}
-          </li>
-        ))}
-      </ul>
+        {/* Navigation Links */}
+        <ul className="navbar__links">
+          {visibleLinks.map((link) => (
+            <li key={link.to}>
+              <Link to={link.to}>{link.label}</Link>
+            </li>
+          ))}
+        </ul>
 
-      {/* CTA — shown when not logged in */}
-      {ctaLabel && (
-        <button className="navbar__cta" onClick={onCtaClick}>
-          {ctaLabel}
-        </button>
-      )}
+        {/* Action Area: Gated by isLogin */}
+        <div className="navbar__actions">
+          {isLogin ? (
+            <button className="navbar__logout" onClick={onLogout}>
+              Logout
+            </button>
+          ) : (
+            <div className="navbar__guest-group">
+              <Link to="/login" className="nav-link-text">Login</Link>
+              <Link to="/register" className="nav-link-text">Sign Up</Link>
+            </div>
+          )}
+        </div>
 
-      {/* Logout — shown when logged in */}
-      {isLogin && onLogout && (
-        <button className="navbar__logout" onClick={onLogout}>
-          Logout
-        </button>
-      )}
-
-    </div>
-  </nav>
-);
+      </div>
+    </nav>
+  );
+};
 
 export default Navbar;

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   Home.css - Complete Home Page Styling
+  Home.css - Complete Home Page Styling
    ═══════════════════════════════════════════════════════════ */
 
 * {
@@ -14,12 +14,16 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   HERO SECTION
+  HERO SECTION
    ══════════════════════════════════════════════════════════ */
 
 .hero-section {
   background: linear-gradient(180deg, #e8f5e9 0%, #f1f8f4 100%);
-  padding: 80px 40px;
+  padding: 40px 20px;
+  min-height: calc(100vh - 70px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .hero-content {
@@ -40,6 +44,7 @@
     opacity: 0;
     transform: translateX(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -47,7 +52,7 @@
 }
 
 .hero-title {
-  font-size: 48px;
+  font-size: 40px;
   font-weight: 700;
   color: #1a1a1a;
   line-height: 1.2;
@@ -107,30 +112,51 @@
   color: white;
 }
 
-.hero-stats {
+.stats-container {
   display: flex;
-  gap: 48px;
+  gap: 3rem;
+  margin-top: 2rem;
+  align-items: flex-start;
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
+  gap: 0.25rem;
+  cursor: default;
 }
 
-.stat-number {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 4px;
+.stat-item h3 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #00c853;
+  margin: 0;
+  display: flex;
+  align-items: baseline;
 }
 
+/* The Small Labels */
 .stat-label {
-  font-size: 14px;
-  color: #666;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: red;
+  /* Much darker grey for readability */
+  text-transform: uppercase;
+  letter-spacing: 0.5rem;
+  margin-top: 4px;
 }
 
 .hero-image {
   animation: fadeInRight 0.8s ease-out;
+  overflow: hidden;
+}
+
+.food-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
 @keyframes fadeInRight {
@@ -138,19 +164,13 @@
     opacity: 0;
     transform: translateX(30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
   }
 }
 
-.food-image {
-  width: 100%;
-  height: 500px;
-  object-fit: cover;
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-}
 
 /* ══════════════════════════════════════════════════════════
    FEATURED SECTION (CAROUSEL)
@@ -349,7 +369,7 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   CTA SECTION
+  CTA SECTION
    ══════════════════════════════════════════════════════════ */
 
 .cta-section {
@@ -395,7 +415,7 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   FOOTER
+  FOOTER
    ══════════════════════════════════════════════════════════ */
 
 .footer {
@@ -462,7 +482,7 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   RESPONSIVE
+  RESPONSIVE
    ══════════════════════════════════════════════════════════ */
 
 @media (max-width: 1024px) {
@@ -537,3 +557,17 @@
     gap: 32px;
   }
 }
+
+.typewriter-container {
+  position: absolute;
+  bottom: 30px;
+  right: 60px;
+  color: #059669;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  z-index: 10;
+  opacity: 0.8;
+}
+

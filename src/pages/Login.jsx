@@ -1,32 +1,36 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react'; // NEW: Imported useContext
 import { Link, useNavigate } from 'react-router-dom';
 
-import Navbar      from '../component/Navbar';
-import AuthCard    from '../component/AuthCard';
-import FormField   from '../component/FormField';
+import Navbar from '../component/Navbar';
+import AuthCard from '../component/AuthCard';
+import FormField from '../component/FormField';
 import SocialLogin from '../component/SocialLogin';
-import { EmailIcon, LockIcon } from '../component/Icons';
+import { EmailIcon, LockIcon, EyeIcon, EyeOffIcon } from '../component/Icons';
 
 import { login } from '../api/serverapi';
+import { AuthContext } from '../AuthContext'; // NEW: Imported the global state
+
 import '../styles/global.css';
 import './Login.css';
 
 const NAV_LINKS = [
-  { label: 'Home',       to: '/home' },
-  { label: 'Dashboard',  to: '/Dashboard' },
-  { label: 'Profile',    to: '/Profile' },
-  { label: 'calculetor', to: '/calculetor' },
-  { label: 'Register',   to: '/register' },
+  { label: 'Home', to: '/home' },
+  { label: 'Dashboard', to: '/Dashboard' },
+  { label: 'Profile', to: '/Profile' },
+  { label: 'calculator', to: '/calculetor' }, 
+  { label: 'Register', to: '/register' },
 ];
 
 const Login = () => {
   const navigate = useNavigate();
+  const { handleLogin } = useContext(AuthContext); // NEW: Connected to global state
 
   const [formData, setFormData] = useState({
-    email:      '',
-    password:   '',
+    identifier: '',
+    password: '',
     rememberMe: false,
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -40,22 +44,23 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await login({
-        email:    formData.email,
+        identifier: formData.identifier,
         password: formData.password,
       });
 
-      // ── Save token AND role ──────────────────────────
-      localStorage.setItem('authToken', response.token);
-      localStorage.setItem('userRole',  response.role); // ← NEW
-      // ────────────────────────────────────────────────
+      // ── NEW GLOBAL STATE UPDATE ───────────────────────────────────
+      // Passes the API response (token, role, username) to AuthContext.
+      // AuthContext will handle saving to localStorage and updating the UI.
+      handleLogin(response); 
+      // ──────────────────────────────────────────────────────────────
 
-      // ── Redirect based on role ───────────────────────
+      // ── Redirect based on role ────────────────────────────────────
       if (response.role === 'nutritionist') {
         navigate('/Nhome');
       } else {
-        navigate('/home');                            // ← CHANGED (was /dashboard)
+        navigate('/home');                            
       }
-      // ────────────────────────────────────────────────
+      // ──────────────────────────────────────────────────────────────
 
     } catch (error) {
       alert(error.message);
@@ -75,26 +80,29 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="login-form" noValidate>
           <FormField
             id="email"
-            label="Email Address"
+            label="Email or Username"
             icon={<EmailIcon />}
-            type="email"
-            name="email"
-            value={formData.email}
+            type="text"
+            name="identifier"
+            value={formData.identifier}
             onChange={handleChange}
-            placeholder="you@example.com"
+            placeholder="Username or email"
             required
+            autoFocus
           />
 
           <FormField
             id="password"
             label="Password"
             icon={<LockIcon />}
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             name="password"
             value={formData.password}
             onChange={handleChange}
             placeholder="••••••••"
             required
+            rightIcon={showPassword ? <EyeIcon/> : <EyeOffIcon/>}
+            onRightIconClick={() => setShowPassword((prev) => !prev)}
           />
 
           <div className="login-form__options">
@@ -119,8 +127,7 @@ const Login = () => {
           </div>
         </form>
 
-        {/* SocialLogin also needs to save the role — paste your SocialLogin.jsx
-            so I can update the Google login handler too */}
+        {/* Note: We will need to update SocialLogin to use AuthContext later too */}
         <SocialLogin role="customer" redirectTo="/dashboard" />
       </AuthCard>
     </div>

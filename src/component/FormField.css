@@ -52,3 +52,14 @@
 .form-field__input::placeholder {
   color: #aaa;
 }
+
+.form-field__icon-right {
+  position:absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  right: 12px;
+  padding: 0;
+  border: none;
+  
+}
