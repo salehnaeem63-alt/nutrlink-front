@@ -135,19 +135,6 @@
   align-items: center;
 }
 
-.navbar__greeting {
-  font-size: 0.85rem;
-  color: #6b7280;
-  font-weight: 500;
-  padding-right: 10px;
-  text-transform: capitalize;
-}
-
-.navbar__greeting strong {
-  color: #111827;
-  font-weight: 600;
-}
-
 .navbar__profile-container {
   position: relative;
 }

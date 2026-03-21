@@ -202,9 +202,10 @@
 }
 
 .section-title {
-  font-size: 32px;
+font-size: 2rem;
+  color: #1f2937;
   font-weight: 700;
-  color: #1a1a1a;
+  letter-spacing: -0.02em;
 }
 
 .carousel-controls {
@@ -330,6 +331,31 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 32px;
+}
+
+.view-all-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.view-nutritionists {
+  font-size: .95rem;
+  padding: 8px 12px 8px 16px;
+  border-radius: 5px;
+  border: 2px solid #00c853;
+  cursor: pointer;
+  background-color: white;
+  color: #00c853;
+  transition: all .3s ease;
+  display: flex;
+  align-items: center;
+  gap:2px;
+}
+
+.view-nutritionists:hover {
+  color: white;
+  background-color: #00c853;
 }
 
 .feature-card {

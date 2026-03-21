@@ -33,7 +33,7 @@ useEffect(() => {
   const NAV_MAP = [
     { label: 'Home', to: '/', isPublic: true },
     { label: 'Dashboard', to: '/dashboard', isPublic: false },
-    { label: 'Profile', to: '/profile', isPublic: false },
+    // { label: 'Profile', to: '/profile', isPublic: false },
     { label: 'Calculator', to: '/calculator', isPublic: true },
   ];
 
@@ -63,9 +63,6 @@ useEffect(() => {
         <div className="navbar__actions">
           {isLogin ? (
             <div className="navbar__user-group">
-              <span className="navbar__greeting">
-                Welcome Back, <strong>{user?.username}</strong>! 👋
-              </span>
 
               <div className="navbar__profile-container" ref={menuRef}>
                 <button className="navbar__profile-btn" onClick={toggleMenu}>

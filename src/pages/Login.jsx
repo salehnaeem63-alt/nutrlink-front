@@ -16,7 +16,7 @@ import './Login.css';
 const NAV_LINKS = [
   { label: 'Home', to: '/home' },
   { label: 'Dashboard', to: '/Dashboard' },
-  { label: 'Profile', to: '/Profile' },
+  // { label: 'Profile', to: '/Profile' },
   { label: 'calculator', to: '/calculetor' }, 
   { label: 'Register', to: '/register' },
 ];
@@ -58,7 +58,7 @@ const Login = () => {
 
       // ── Redirect based on role ────────────────────────────────────
       if (response.role === 'nutritionist') {
-        navigate('/Nhome');
+        navigate('/home');
       } else {
         navigate('/home');                            
       }
