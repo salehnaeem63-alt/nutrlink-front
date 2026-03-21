@@ -24,7 +24,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [newGoal, setNewGoal] = useState('');
   const [showGoalInput, setShowGoalInput] = useState(false);
-  
+
   // Chart time period state - can be 7, 14, 30, or 'monthly'
   const [chartPeriod, setChartPeriod] = useState(30);
 
@@ -43,7 +43,7 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch all data
       const [summaryData, todayData, goalsData, logsData, appointmentsData] = await Promise.all([
         getsammury(),
@@ -60,7 +60,7 @@ const Dashboard = () => {
       setGoals(goalsData.goals || []);
       setLogHistory(logsData.logs || []);
       setAppointments(appointmentsData.appointments || []);
-      
+
       // Get diet plan if available
       try {
         const dietData = await getdite();
@@ -68,7 +68,7 @@ const Dashboard = () => {
       } catch (error) {
         setDietPlan(summaryData.summary?.activeDiet || null);
       }
-      
+
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
@@ -116,7 +116,7 @@ const Dashboard = () => {
       const result = await creategoal({ data: newGoal });
       setNewGoal('');
       setShowGoalInput(false);
-      
+
       // Update goals directly from response instead of refetching
       if (result.goals) {
         setGoals(result.goals);
@@ -174,7 +174,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <>
-        <Navbar isLogin={true} onLogout={() => {/* handle logout */}} />
+        <Navbar isLogin={true} onLogout={() => {/* handle logout */ }} />
         <div className="dashboard-loading">
           <div className="spinner"></div>
           <p>Loading your dashboard...</p>
@@ -199,11 +199,11 @@ const Dashboard = () => {
 
   return (
     <>
-      <Navbar isLogin={true} onLogout={() => {/* handle logout */}} />
-      
+      <Navbar isLogin={true} onLogout={() => {/* handle logout */ }} />
+
       <div className="dashboard">
         <div className="dashboard__container">
-          
+
           {/* Header */}
           <div className="dashboard__header">
             <h1>My Dashboard</h1>
@@ -264,7 +264,7 @@ const Dashboard = () => {
 
           {/* Main Content Grid */}
           <div className="dashboard__grid">
-            
+
             {/* Row 1: BMI, Weight Journey, Next Appointment */}
             <div className="dashboard__card bmi-card">
               <h2>BMI</h2>
@@ -279,8 +279,8 @@ const Dashboard = () => {
               {bmi && (
                 <div className="bmi-scale">
                   <div className="bmi-scale__bar">
-                    <div className="bmi-scale__marker" style={{ 
-                      left: `${Math.min(Math.max((parseFloat(bmi) / 40) * 100, 0), 100)}%` 
+                    <div className="bmi-scale__marker" style={{
+                      left: `${Math.min(Math.max((parseFloat(bmi) / 40) * 100, 0), 100)}%`
                     }}></div>
                   </div>
                   <div className="bmi-scale__labels">
@@ -307,16 +307,16 @@ const Dashboard = () => {
                     <span className="journey-label">TARGET (KG)</span>
                   </div>
                 </div>
-                
+
                 <div className="progress-bar">
-                  <div 
-                    className="progress-bar__fill" 
-                    style={{ 
-                      width: `${Math.min(Math.max(((originalWeight - currentWeight) / (originalWeight - targetWeight)) * 100, 0), 100)}%` 
+                  <div
+                    className="progress-bar__fill"
+                    style={{
+                      width: `${Math.min(Math.max(((originalWeight - currentWeight) / (originalWeight - targetWeight)) * 100, 0), 100)}%`
                     }}
                   ></div>
                 </div>
-                
+
                 <p className="weight-remaining">
                   {Math.abs(remaining).toFixed(1)} kg remaining to reach your goal
                 </p>
@@ -344,10 +344,10 @@ const Dashboard = () => {
                   <div className="appointment-datetime">
                     <div className="appointment-date">
                       <span className="appointment-icon">📅</span>
-                      <span>{new Date(appointments[0].date).toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric', 
-                        year: 'numeric' 
+                      <span>{new Date(appointments[0].date).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
                       })}</span>
                     </div>
                     <div className="appointment-time">
@@ -378,25 +378,25 @@ const Dashboard = () => {
               <div className="card-header">
                 <h2>📊 Progress History</h2>
                 <div className="chart-period-selector">
-                  <button 
+                  <button
                     className={`period-btn ${chartPeriod === 7 ? 'active' : ''}`}
                     onClick={() => updateChartPeriod(7)}
                   >
                     7 Days
                   </button>
-                  <button 
+                  <button
                     className={`period-btn ${chartPeriod === 14 ? 'active' : ''}`}
                     onClick={() => updateChartPeriod(14)}
                   >
                     14 Days
                   </button>
-                  <button 
+                  <button
                     className={`period-btn ${chartPeriod === 30 ? 'active' : ''}`}
                     onClick={() => updateChartPeriod(30)}
                   >
                     30 Days
                   </button>
-                  <button 
+                  <button
                     className={`period-btn ${chartPeriod === 'monthly' ? 'active' : ''}`}
                     onClick={() => updateChartPeriod('monthly')}
                   >
@@ -404,16 +404,16 @@ const Dashboard = () => {
                   </button>
                 </div>
               </div>
-              
+
               {logHistory.length > 0 ? (
                 <div className="combined-chart-container">
                   <div className="combined-chart-scroll">
                     {(() => {
                       // Determine which logs to display
-                      const logsToDisplay = chartPeriod === 'monthly' 
-                        ? logHistory 
+                      const logsToDisplay = chartPeriod === 'monthly'
+                        ? logHistory
                         : logHistory.slice(0, chartPeriod);
-                      
+
                       return logsToDisplay.reverse().map((log, index) => {
                         // Calculate heights for each metric
                         const dataToUse = chartPeriod === 'monthly' ? logHistory : logHistory.slice(0, chartPeriod);
@@ -423,28 +423,28 @@ const Dashboard = () => {
                         const maxWeight = allWeights.length > 0 ? Math.max(...allWeights) : 100;
                         const minWeight = allWeights.length > 0 ? Math.min(...allWeights) : 50;
                         const weightRange = maxWeight - minWeight || 10;
-                        
+
                         const waterHeight = ((log.waterIntake || 0) / maxWater) * 100;
                         const exerciseHeight = ((log.exerciseMinutes || 0) / maxExercise) * 100;
                         const weightHeight = log.weight ? ((log.weight - minWeight) / weightRange) * 100 : 0;
-                        
+
                         // Format date based on view mode
                         const dateObj = new Date(log.date);
-                        const dateLabel = chartPeriod === 'monthly' 
+                        const dateLabel = chartPeriod === 'monthly'
                           ? dateObj.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
                           : dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                        
+
                         return (
                           <div key={log._id || index} className="combined-bar-group">
                             <span className="bar-group__date bar-group__date--top">
                               {dateLabel}
                             </span>
-                            
+
                             <div className="bar-group-container">
                               {/* Water Bar */}
                               <div className="mini-bar-container">
                                 <span className="mini-bar__icon">💧</span>
-                                <div 
+                                <div
                                   className="mini-bar mini-bar--water"
                                   style={{ height: `${Math.max(waterHeight, 5)}%` }}
                                   title={`Water: ${log.waterIntake || 0}ml on ${dateObj.toLocaleDateString()}`}
@@ -452,11 +452,11 @@ const Dashboard = () => {
                                   <span className="mini-bar__value">{log.waterIntake || 0}</span>
                                 </div>
                               </div>
-                              
+
                               {/* Exercise Bar */}
                               <div className="mini-bar-container">
                                 <span className="mini-bar__icon">🏃</span>
-                                <div 
+                                <div
                                   className="mini-bar mini-bar--exercise"
                                   style={{ height: `${Math.max(exerciseHeight, 5)}%` }}
                                   title={`Exercise: ${log.exerciseMinutes || 0} min on ${dateObj.toLocaleDateString()}`}
@@ -464,11 +464,11 @@ const Dashboard = () => {
                                   <span className="mini-bar__value">{log.exerciseMinutes || 0}</span>
                                 </div>
                               </div>
-                              
+
                               {/* Weight Bar */}
                               <div className="mini-bar-container">
                                 <span className="mini-bar__icon">⚖️</span>
-                                <div 
+                                <div
                                   className="mini-bar mini-bar--weight"
                                   style={{ height: `${Math.max(weightHeight, 5)}%` }}
                                   title={`Weight: ${log.weight || 'N/A'}kg on ${dateObj.toLocaleDateString()}`}
@@ -482,7 +482,7 @@ const Dashboard = () => {
                       });
                     })()}
                   </div>
-                  
+
                   {/* Legend */}
                   <div className="chart-legend">
                     <div className="legend-item">
@@ -515,7 +515,7 @@ const Dashboard = () => {
             </div>
 
             {/* Row 2: Log Today's Activity, My Goals, Active Diet Plan */}
-            
+
             {/* Log Today's Activity */}
             <div className="dashboard__card">
               <div className="card-header">
@@ -529,7 +529,7 @@ const Dashboard = () => {
                     <input
                       type="number"
                       value={logForm.waterIntake}
-                      onChange={(e) => setLogForm({...logForm, waterIntake: e.target.value})}
+                      onChange={(e) => setLogForm({ ...logForm, waterIntake: e.target.value })}
                       placeholder="e.g., 2000"
                       required
                     />
@@ -539,7 +539,7 @@ const Dashboard = () => {
                     <input
                       type="number"
                       value={logForm.exerciseMinutes}
-                      onChange={(e) => setLogForm({...logForm, exerciseMinutes: e.target.value})}
+                      onChange={(e) => setLogForm({ ...logForm, exerciseMinutes: e.target.value })}
                       placeholder="e.g., 30"
                       required
                     />
@@ -550,15 +550,15 @@ const Dashboard = () => {
                       type="number"
                       step="0.1"
                       value={logForm.weight}
-                      onChange={(e) => setLogForm({...logForm, weight: e.target.value})}
+                      onChange={(e) => setLogForm({ ...logForm, weight: e.target.value })}
                       placeholder="e.g., 75.5"
                       required
                     />
                   </div>
                   <div className="log-form__actions">
                     <button type="submit" className="btn btn--primary">Save Log</button>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="btn btn--secondary"
                       onClick={() => {
                         setShowLogForm(false);
@@ -598,7 +598,7 @@ const Dashboard = () => {
                   ) : (
                     <p className="empty-state">No activity logged today</p>
                   )}
-                  <button 
+                  <button
                     className="btn btn--primary btn--full"
                     onClick={() => setShowLogForm(true)}
                     style={{ marginTop: '1rem' }}
@@ -613,7 +613,7 @@ const Dashboard = () => {
             <div className="dashboard__card">
               <div className="card-header">
                 <h2>My Goals</h2>
-                <button 
+                <button
                   className="btn btn--small btn--primary"
                   onClick={() => setShowGoalInput(!showGoalInput)}
                 >
@@ -632,8 +632,8 @@ const Dashboard = () => {
                   />
                   <div className="goal-form__actions">
                     <button type="submit" className="btn btn--primary">Add</button>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="btn btn--secondary"
                       onClick={() => {
                         setShowGoalInput(false);
@@ -710,7 +710,7 @@ const Dashboard = () => {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="diet-compact-meals">
                     <p className="diet-compact-label">Today's Meals</p>
                     {activeDiet.meals && activeDiet.meals.filter(m => {

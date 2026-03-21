@@ -1,40 +1,50 @@
-import { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
-// 1. Create the empty Context (the "radio station")
 export const AuthContext = createContext();
 
-// 2. Create the Provider (the "broadcaster")
 export const AuthProvider = ({ children }) => {
-    // Initialize state from the hard drive so the user stays logged in if they refresh the page (F5)
-    const [user, setUser] = useState(() => {
-        const savedUser = localStorage.getItem('user');
-        return savedUser ? JSON.parse(savedUser) : null;
-    });
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // This is the function we called inside Login.jsx
-    const handleLogin = (userData) => {
-        // 1. Save all data to the browser's hard drive
+    // 1. Lifecycle: Check for existing session on startup
+    useEffect(() => {
+        const savedUser = localStorage.getItem('user');
+        const token = localStorage.getItem('authToken');
+
+        if (savedUser && token) {
+            setUser(JSON.parse(savedUser));
+        }
+        setLoading(false);
+    }, []);
+
+    // 2. Action: Handle Login (Works for Google & Manual Login)
+    const handleLogin = (userData, token) => {
+        // Save to LocalStorage for persistence
+        localStorage.setItem('authToken', token);
         localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.setItem('authToken', userData.token);
         localStorage.setItem('userRole', userData.role);
 
-        // 2. Broadcast the data to React's internal state
+        // Update React State for immediate UI change
         setUser(userData);
     };
 
+    // 3. Action: Handle Logout
     const handleLogout = () => {
-        // 1. Wipe the hard drive
-        localStorage.removeItem('user');
         localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
         localStorage.removeItem('userRole');
-
-        // 2. Tell React the user is gone
         setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, handleLogin, handleLogout }}>
-            {children}
+        <AuthContext.Provider value={{
+            user,
+            isLogin: !!user,
+            handleLogin,
+            handleLogout,
+            loading
+        }}>
+            {!loading && children}
         </AuthContext.Provider>
     );
 };

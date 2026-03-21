@@ -32,7 +32,7 @@ const SocialLogin = ({ role = 'customer', redirectTo, onSuccess }) => {
       if (res.role === 'nutritionist') {
         navigate('/Nprofile');
       } else {
-        navigate('/profile');
+        navigate('/home');
       }
       // ────────────────────────────────────────────────
 

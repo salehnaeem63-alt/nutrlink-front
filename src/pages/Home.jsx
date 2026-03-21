@@ -53,11 +53,37 @@ const Home = () => {
   const handleNextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
   const handleFilterChange = (filters) => console.log('Filters changed:', filters);
 
+  const typewriterOptions = {
+    nutritionist: [
+      'Managing your clients efficiently',
+      'Creating professional meal plans',
+      'Tracking patient health metrics',
+      'Expanding your wellness practice'
+    ],
+    customer: [
+      'Tracking your daily progress',
+      'Achieving your weight goals',
+      'Personalizing your diet plan',
+      'Connecting with your expert'
+    ],
+    guest: [
+      'Making your life better',
+      'The Smart Bridge to Better Health',
+      'Connecting you with experts',
+      'Personalizing your diet',
+      'Smart food tracking',
+      'Evidence-Based Wellness Ecosystem'
+    ]
+  }
+  const userRole = user?.role || 'guest'
+  const activeStrings = typewriterOptions[userRole] || typewriterOptions.guest
+
   return (
     <div className="container">
       <div className="home-page">
         <Navbar
           isLogin={isLogin}
+          user={user}
           onLogout={onLogoutClick}
           ctaLabel={!isLogin ? "Get Started" : ""}
           onCtaClick={handleCtaClick}
@@ -67,27 +93,13 @@ const Home = () => {
         <section className="hero-section">
           <div className="hero-content">
             <div className="hero-text">
-              {/* Dynamic Greeting */}
-              {user?.username && (
-                <p className="user-greeting">
-                  Welcome back, {user.username}! 👋
-                </p>
-              )}
 
               {/* Typetwriter AI Feed */}
               <div className="typewriter-container">
                 <span className="typewriter-label"></span>
                 <Typewriter
                   options={{
-                    strings: [
-                      'Making your life better',
-                      'Connecting you with experts',
-                      'Personalizing your diet',
-                      'Tracking your progress',
-                      'Achieving your weight goals',
-                      'Smart food tracking',
-                      'Achieving your weight goals'
-                    ],
+                    strings: activeStrings,
                     autoStart: true,
                     loop: true,
                     deleteSpeed: 50,
