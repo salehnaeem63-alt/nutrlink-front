@@ -1,0 +1,137 @@
+/* Container & Layout */
+.home-schedule {
+    max-width: 1200px;
+    width: 95%;
+    margin: 40px auto;
+    display: flex;
+    gap: 40px;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f0;
+}
+
+.schedule-list-side { flex: 1.2; }
+.schedule-info-side { 
+    flex: 1; 
+    background: #f9fbf9; 
+    padding: 30px; 
+    border-radius: 20px;
+    border: 1px dashed #e0e0e0;
+}
+
+/* Typography */
+h2 {
+    font-size: 1.4rem;
+    color: #1a1a1a;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+/* Appointment Card */
+.schedule-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.schedule-item {
+    background: #f8f9fa;
+    padding: 16px 20px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #edf2f7;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.schedule-item:hover {
+    background: #ffffff;
+    border-color: #27ae60;
+    transform: translateX(8px); /* Slides right slightly on hover */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Left Side: Avatar & Identity */
+.appt-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.appt-avatar {
+    width: 50px;
+    height: 50px;
+    background: #27ae60;
+    color: white;
+    border-radius: 14px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+    overflow: hidden; /* CRITICAL: Clips the image to the border-radius */
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* CRITICAL: Prevents stretching/squishing */
+}
+
+.appt-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.nutritionist-name {
+    font-weight: 700;
+    color: #2d3436;
+    font-size: 1rem;
+}
+
+.appt-time {
+    color: #27ae60 !important;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* Right Side: Meta & Actions */
+.appt-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.appt-date {
+    font-size: 0.8rem;
+    color: #636e72 !important;
+    font-weight: 600;
+    background: #e9ecef;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.details-btn {
+    padding: 6px 16px;
+    border: 1.5px solid #27ae60;
+    background: #ffffff;
+    color: #27ae60;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.details-btn:hover {
+    background: #27ae60;
+    color: white;
+}

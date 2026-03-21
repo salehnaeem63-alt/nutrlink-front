@@ -17,7 +17,7 @@ const NAV_LINKS = [
   { label: 'Home', to: '/home' },
   { label: 'Dashboard', to: '/Dashboard' },
   // { label: 'Profile', to: '/Profile' },
-  { label: 'calculator', to: '/calculetor' }, 
+  { label: 'calculator', to: '/calculetor' },
   { label: 'Register', to: '/register' },
 ];
 
@@ -40,34 +40,31 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await login({
-        identifier: formData.identifier,
-        password: formData.password,
-      });
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await login({
+      identifier: formData.identifier,
+      password: formData.password,
+    });
 
-      
+    console.log("Full Response Object:", response);
 
-      // ── NEW GLOBAL STATE UPDATE ───────────────────────────────────
-      // Passes the API response (token, role, username) to AuthContext.
-      // AuthContext will handle saving to localStorage and updating the UI.
-      handleLogin(response); 
-      // ──────────────────────────────────────────────────────────────
+    // ✅ FIX: Since 'response' IS the user object, pass it directly.
+    // We assume 'token' is also inside this object.
+    handleLogin(response, response.token); 
 
-      // ── Redirect based on role ────────────────────────────────────
-      if (response.role === 'nutritionist') {
-        navigate('/home');
-      } else {
-        navigate('/home');                            
-      }
-      // ──────────────────────────────────────────────────────────────
-
-    } catch (error) {
-      alert(error.message);
+    // ✅ FIX: Access role directly from response
+    if (response.role === 'nutritionist') {
+      navigate('/home');
+    } else {
+      navigate('/home');
     }
-  };
+
+  } catch (error) {
+    alert(error.message);
+  }
+};
 
   return (
     <div className="auth-page">
@@ -103,7 +100,7 @@ const Login = () => {
             onChange={handleChange}
             placeholder="••••••••"
             required
-            rightIcon={showPassword ? <EyeIcon/> : <EyeOffIcon/>}
+            rightIcon={showPassword ? <EyeIcon /> : <EyeOffIcon />}
             onRightIconClick={() => setShowPassword((prev) => !prev)}
           />
 

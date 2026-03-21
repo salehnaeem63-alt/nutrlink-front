@@ -189,8 +189,8 @@
    ══════════════════════════════════════════════════════════ */
 
 .featured-section {
-  padding: 80px 40px;
-  background: white;
+  padding: 40px 20px;
+  background: #f9f9f9;
 }
 
 .section-header {
@@ -575,7 +575,7 @@ font-size: 2rem;
   .featured-section,
   .features-section,
   .cta-section {
-    padding: 60px 20px;
+    padding: 20px 10px;
   }
 
   .section-title {

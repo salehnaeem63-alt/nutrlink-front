@@ -7,17 +7,15 @@ import Navbar from '../component/Navbar';
 import FilterBar from '../component/FilterBar';
 import NutritionistCard from '../component/NutritionistCard';
 import { Aibot } from '../component/Aibot';
+import HomeSchedule from '../component/HomeSchedule';
 
 // Global state for authentication
 import { AuthContext } from '../AuthContext';
 
 const Home = () => {
   const navigate = useNavigate();
-
-  // Global state logic
   const { user, handleLogout } = useContext(AuthContext);
   const isLogin = !!user;
-
 
   // Nutritionists Dataset
   const featuredNutritionists = [
@@ -191,7 +189,7 @@ const Home = () => {
           </div>
         </section>
 
-        
+        <HomeSchedule/>
 
         {/* {Top Nutritionists Rated Section} */}
         {!isLogin && (
@@ -235,7 +233,7 @@ const Home = () => {
         {isLogin && user?.role === 'customer' && (
           <section className="featured-section">
             <div className="section-header">
-              <h2 className="section-title">ٌRecommended for You</h2>
+              <h2 className="section-title">Recommended for You</h2>
             </div>
             <div className="nutritionists-grid">
               {currentNutritionists.map((nutritionist) => (
@@ -254,7 +252,7 @@ const Home = () => {
             </div>
           </section>
         )}
-        
+
 
         <section className="features-section">
           <h2 className="section-title">Everything You Need for a Healthier Life</h2>
