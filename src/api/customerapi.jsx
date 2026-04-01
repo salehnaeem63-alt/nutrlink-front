@@ -31,6 +31,8 @@ export const createProfile = async (info) => {
   return data
 }
 
+
+
 export const getCustomerProfile = async () => {
   try {
     const { data } = await api.get('/profile/me')
@@ -39,6 +41,11 @@ export const getCustomerProfile = async () => {
     if (err.response?.status === 404) return null
     throw err
   }
+}
+
+export const getProfileById = async (userId) => {
+  const { data } = await api.get(`/profile/${userId}`)
+  return data
 }
 
 export const updateCustomerProfile = async (info) => {

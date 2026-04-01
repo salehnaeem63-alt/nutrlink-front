@@ -27,6 +27,8 @@ import { Ndashboard } from './pages/Ndashboard/Ndashboard'
 import Nutritionists from './pages/Nutritionists/Nutritionists'
 import Appointments from './pages/Appointments/Appointments'
 
+// Add this to your Routes:
+
 function App() {
   const { loading } = useContext(AuthContext)
 
@@ -55,7 +57,9 @@ function App() {
           {/* Role-based Profile Route */}
           <Route path="/profile" element={<RoleRoute role="customer"><Profile /></RoleRoute>} />
           <Route path="/Nprofile" element={<RoleRoute role="nutritionist"><NutriProfile /></RoleRoute>} />
-          <Route path="/Nprofile" element={<RoleRoute role="nutritionist"><NutriProfile /></RoleRoute>} />
+
+          <Route path="/customer/profile/:userId" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/nutritionist/profile/:userId" element={<ProtectedRoute><NutriProfile /></ProtectedRoute>} />
 
 
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

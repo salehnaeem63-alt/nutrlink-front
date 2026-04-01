@@ -59,6 +59,8 @@
   /* margin-top: -80px;  <-- DELETE THIS LINE */
   border-bottom: 1px solid var(--np-border-light);
   gap: 24px;
+  position: relative;
+  top: -30px;
 }
 
 .np-avatar-container {
@@ -69,11 +71,11 @@
   background-color: var(--np-green-main);
   overflow: hidden;
   flex-shrink: 0;
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
   position: relative;
-  margin-top: -80px; /* <-- ADD IT HERE INSTEAD */
+  margin-top: -800px;
 }
 
 .np-avatar-container img {
@@ -95,6 +97,8 @@
 .np-header-info {
   flex: 1;
   padding-bottom: 10px;
+  position: relative;
+  top: 30px;
 }
 .np-header-info h1 {
   font-size: 2.2rem;

@@ -26,7 +26,7 @@
 }
 
 /* Typography */
-h2 {
+.schedule-info-side h2 {
     font-size: 1.4rem;
     color: #1a1a1a;
     margin-bottom: 25px;

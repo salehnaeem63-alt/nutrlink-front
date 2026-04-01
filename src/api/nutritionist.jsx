@@ -49,6 +49,11 @@ export async function getProfile() {
   }
 }
 
+export const getProfileById = async (userId) => {
+  const { data } = await api.get(`/profile/${userId}`)
+  return data 
+}
+
 // update profile
 export async function updateProfile(info) {
   // 1. Extract only the allowed fields from the info object
