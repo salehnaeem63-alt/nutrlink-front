@@ -32,6 +32,7 @@ const Navbar = () => {
     { label: 'Home', to: '/', isPublic: true },
     { label: 'Nutritionists', to: '/nutritionists', isPublic: true },
     { label: 'Dashboard', to: user?.role === 'nutritionist' ? '/Ndashboard' : '/dashboard', isPublic: false },
+    { label: 'Appointments', to: '/appointments', isPublic: false },
     { label: 'Calculator', to: '/calculator', isPublic: true },
   ];
 

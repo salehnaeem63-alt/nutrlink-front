@@ -25,6 +25,7 @@ import { NutriProfile } from './pages/NutrProfile/NutriProfile'
 import { NutriCreateProfile } from './pages/NutrProfile/Nutricreateprofile'
 import { Ndashboard } from './pages/Ndashboard/Ndashboard'
 import Nutritionists from './pages/Nutritionists/Nutritionists'
+import Appointments from './pages/Appointments/Appointments'
 
 function App() {
   const { loading } = useContext(AuthContext)
@@ -62,9 +63,8 @@ function App() {
           <Route path="/creatNprofile" element={<ProtectedRoute><NutriCreateProfile /></ProtectedRoute>} />
           <Route path="/Ndashboard" element={<ProtectedRoute><Ndashboard /></ProtectedRoute>} />
           <Route path="/Ai" element={<ProtectedRoute><Aifull /></ProtectedRoute>} />
-          <Route path="/admin"
-            element={<AdminRoute><AdminDashboard /></AdminRoute>}
-          />
+          <Route path="/appointments" element={<ProtectedRoute><Appointments /></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>

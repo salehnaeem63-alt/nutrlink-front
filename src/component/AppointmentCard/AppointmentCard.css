@@ -1,0 +1,132 @@
+.appointment-card {
+  position: relative;
+  background: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 1rem;
+  width: 100%;
+  height: 140px;
+}
+
+.info-text {
+  flex: 1;
+}
+
+.profilePic {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f1f5f9;
+}
+
+.info-text h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #1e293b;
+  font-style: italic;
+}
+
+.info-text .type {
+  font-size: 0.875rem;
+  color: #333;
+  margin: 2px 0 10px;
+  position: relative;
+  z-index: 1;
+  background: rgba(29, 158, 117, 0.25);
+  border: 1px solid rgba(29, 158, 117, 4);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 10px;
+  width: fit-content;
+  letter-spacing: .5px;
+}
+
+.session-number {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 116px;
+    color: #64748b;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.time-date-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Aligns both lines to the right edge */
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    text-align: right;
+}
+
+.date {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e293b; /* Darker for better visibility */
+}
+
+.time {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #10b981; /* Nutrlink Green */
+}
+
+.button-group {
+    position: absolute;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    display: flex;
+    gap: 8px; /* Keeps buttons perfectly spaced */
+}
+
+.details-btn-hero,
+.start-btn-hero {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s all ease;
+  font-size: 0.85rem;
+}
+
+.start-btn-hero.disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+  cursor: not-allowed;
+}
+
+.start-btn-hero.active {
+  background: #10b981; /* Solid Green */
+  color: white;
+  border: 1px solid #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+
+.start-btn-hero.active:hover {
+  background: #059669;
+  transform: scale(1.05);
+}
+
+.details-btn-hero {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+
+.details-btn-hero:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}

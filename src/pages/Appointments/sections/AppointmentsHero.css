@@ -1,0 +1,44 @@
+.appointments-hero {
+    display: flex;
+    margin-top: 40px;
+    min-height: 600px;
+}
+
+.hero-sidebar {
+    flex: 1.5;
+    background-color: rgb(244, 180, 180);
+    margin-right: 15px;
+}
+
+.hero-scroll-list {
+    width: 90%;
+    margin: auto;
+}
+
+.hero-main-view {
+    flex: 1;
+    margin-left: 15px;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.hero-main-view::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: -18px;
+    width: 1.5px;
+    height: 90%;
+    background-color: #10b981;
+}
+
+.hero-main-view h2 {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #666;
+    /* font-weight: 600; */
+}
