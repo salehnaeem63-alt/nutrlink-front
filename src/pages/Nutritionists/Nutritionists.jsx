@@ -4,6 +4,7 @@ import Navbar from '../../component/Navigationbar/Navbar'
 import FilterBar from '../../component/FilterBar/FilterBar'
 import LoadingOverlay from "../../component/LoadingOverlay/LoadingOverlay"
 import NutritionistPageCards from "../../component/NutritionistCard/NutritionistPageCard"
+import BookingModal from '../../component/Bookingmodal/Bookingmodal';
 import './Nutritionists.css'
 
 const Nutritionists = () => {
@@ -18,6 +19,11 @@ const Nutritionists = () => {
     languages: '',
     search: ''
   })
+
+
+  const [selectedId, setSelectedId] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   useEffect(() => {
     const fetchExperts = async () => {
@@ -101,13 +107,28 @@ const Nutritionists = () => {
               <p className="no-results">No nutritionists found. Try adjusting your filters.</p>
             ) : (
               nutritionists.map((n) => (
-                <NutritionistPageCards key={n._id} nutritionist={n}/>
+                <NutritionistPageCards
+                  key={n._id}
+                  nutritionist={n}
+                  onClick={() => {
+                    setSelectedId(n.user._id)
+                    setIsModalOpen(true)
+                  }}
+                />
               ))
             )}
           </div>
-
         </div>
       </div>
+
+      {isModalOpen && (
+        <BookingModal
+        nutritionistId = {selectedId}
+        onClose={() => {
+          setIsModalOpen(false)
+          setSelectedId(null)
+        }} />
+      )}
     </div >
   )
 }

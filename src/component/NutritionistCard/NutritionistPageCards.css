@@ -4,7 +4,7 @@
   border: 1px solid #efefef;
   border-radius: 16px;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 0.9s cubic-bezier(0.165, 0.84, 0.44, 1);
   cursor: pointer;
   position: relative;
   display: flex;
@@ -14,10 +14,11 @@
   max-width: 100%;
   gap: 10px;
   margin-bottom: 30px;
+
 }
 
 .nutritionist-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-2px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   border-color: #10b981;
 }

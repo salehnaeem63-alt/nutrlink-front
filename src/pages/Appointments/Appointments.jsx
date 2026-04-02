@@ -44,7 +44,7 @@ const Appointments = () => {
   return (
     <div className='appointments-container'>
       <Navbar />
-      <LoadingOverlay message="Searching for experts..." isActive={loading} />
+      <LoadingOverlay message="Loading my appointments..." isActive={loading} />
       {!loading && <AppointmentsHero appointments={upcomingAppointments} role={user?.role} />}
       {/* <AppointmentsManager /> */}
     </div>

@@ -238,9 +238,23 @@
   position: relative;
 }
 
+/* Light green background for days with slots */
+.calendar-day.has-available-slots {
+  background-color: #cef6d1; 
+  border: 1px solid #1D9E75;
+  color: #1D9E75;
+}
+
+/* Ensure the selected state stays solid green and overrides the light green */
+.calendar-day.selected {
+  background-color: #1D9E75;
+  color: white;
+  border-color: #1D9E75;
+}
 .calendar-day:hover:not(.disabled) {
   border-color: #00c853;
   background: #f0fdf4;
+  color:#00c853;
   transform: translateY(-2px);
 }
 
@@ -319,7 +333,7 @@
 
 .time-slots {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 10px;
 }
 
@@ -339,6 +353,7 @@
 .time-slot:hover {
   border-color: #00c853;
   background: #f0fdf4;
+  color:#00c853;
 }
 
 .time-slot.selected {
