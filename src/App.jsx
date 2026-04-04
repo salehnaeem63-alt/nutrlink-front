@@ -26,6 +26,7 @@ import { NutriCreateProfile } from './pages/NutrProfile/Nutricreateprofile'
 import { Ndashboard } from './pages/Ndashboard/Ndashboard'
 import Nutritionists from './pages/Nutritionists/Nutritionists'
 import Appointments from './pages/Appointments/Appointments'
+import ChatPage from './pages/Chat';
 
 // Add this to your Routes:
 
@@ -61,6 +62,7 @@ function App() {
           <Route path="/customer/profile/:userId" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/nutritionist/profile/:userId" element={<ProtectedRoute><NutriProfile /></ProtectedRoute>} />
 
+          <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
 
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/Nprofile" element={<ProtectedRoute><NutriProfile /></ProtectedRoute>} />

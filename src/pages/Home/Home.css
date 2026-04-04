@@ -2,11 +2,7 @@
   Home.css - Complete Home Page Styling
    ═══════════════════════════════════════════════════════════ */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+
 
 .home-page {
   min-height: 100vh;
