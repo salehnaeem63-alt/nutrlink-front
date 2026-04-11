@@ -31,6 +31,11 @@ export const sendMessage = async (recipientId, text) => {
   return response.data
 }
 
+export const deleteMessage = async(messageId) => {
+  const response = await chatApi.delete(`/messages/${messageId}`)
+  return response.data
+}
+
 export const getConversations = async () => {
   const response = await chatApi.get('/conversations')
   return response.data
@@ -39,6 +44,11 @@ export const getConversations = async () => {
 export const getMessages = async (conversationId) => {
   const response = await chatApi.get(`/messages/${conversationId}`)
   return response.data
+}
+
+export const accessConversation = async (userId) => {
+  const { data } = await chatApi.post('/', { userId})
+  return data
 }
 
 export default chatApi

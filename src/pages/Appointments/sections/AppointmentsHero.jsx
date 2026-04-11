@@ -2,6 +2,7 @@ import Swal from 'sweetalert2'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cancelAppointment } from '../../../api/appointmetapi'
+import { accessConversation } from '../../../api/chatapi'
 import { showAlert, showConfirm } from '../../../utils/alertService';
 import AppointmentCard from '../../../component/AppointmentCard/AppointmentCard'
 import './AppointmentsHero.css'
@@ -32,6 +33,16 @@ const AppointmentsHero = ({ appointments = [], role, refreshData }) => {
       }
     }
   };
+
+  const handleMessageClick = async () => {
+    try {
+      const chatData = await accessConversation(target?._id)
+      navigate('/chat', { state: { incomingChat: chatData } })
+    } catch (err) {
+      console.error('Error accessing chat:', err)
+    }
+  }
+
 
   return (
     <div className="appointments-hero">
@@ -65,7 +76,7 @@ const AppointmentsHero = ({ appointments = [], role, refreshData }) => {
         {appointments.length < 3 && appointments.length > 0 && (
           <div className="barear"></div>
         )}
-        
+
         {selectedAppt ? (
           <div className="details-overlay-absolute">
             <button onClick={() => setSelectedAppt(null)} className='exit-btn'>X</button>
@@ -92,7 +103,7 @@ const AppointmentsHero = ({ appointments = [], role, refreshData }) => {
                 </button>
               </div>
               <div className="footer-right-info">
-                <button className='message'>message</button>
+                <button className='message' onClick={handleMessageClick} >message</button>
                 <button className='see-profile' onClick={() => navigate(`/${targetRole}/profile/${target?._id}`)}>see profile</button>
               </div>
             </div>
@@ -100,8 +111,8 @@ const AppointmentsHero = ({ appointments = [], role, refreshData }) => {
         ) : (
           <div className="no-result-container">
             <h2 className='no-result'>
-              {appointments.length > 0 
-                ? "Click over any appointment to see details" 
+              {appointments.length > 0
+                ? "Click over any appointment to see details"
                 : "Your schedule is currently empty"}
             </h2>
           </div>

@@ -2,23 +2,25 @@
   Home.css - Complete Home Page Styling
    ═══════════════════════════════════════════════════════════ */
 
-
+.container {
+  width: 100%;
+  margin: auto;
+}
 
 .home-page {
+  width: 100%; /* Must be 100% for full-width backgrounds */
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
 }
-
 /* Force their 'inner' divs to act like containers */
 .navbar-inner, 
 .hero-content, 
 .featured-section > div, 
 .footer-content {
-  max-width: 1200px !important; /* Pick one width for the whole site */
-  margin-left: auto !important;
-  margin-right: auto !important;
-  width: 90% !important; /* Fallback for smaller screens */
-  padding: 0 20px !important;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -32,11 +34,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%; /* Replaced 1110px */
 }
 
+/* 3. CLEAN UP HERO CONTENT */
 .hero-content {
-  max-width: 1400px;
-  margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 60px;
@@ -441,6 +443,7 @@
   background: #1a1a1a;
   color: white;
   padding: 60px 40px 24px;
+  width: 100%;
 }
 
 .footer-content {
