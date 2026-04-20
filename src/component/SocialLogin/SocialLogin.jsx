@@ -1,18 +1,13 @@
+import { useContext } from 'react'; // ADD THIS
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { loginWithGoogle } from '../../api/serverapi';
+import { AuthContext } from '../../AuthContext'; // ADD THIS
 import './SocialLogin.css';
 
-/**
- * SocialLogin
- *
- * Props:
- *   role          – 'customer' | 'nutritionist'  (sent to the API)
- *   redirectTo    – ignored now (redirect is role-based automatically)
- *   onSuccess     – optional extra callback(res)
- */
-const SocialLogin = ({ role = 'customer', redirectTo, onSuccess }) => {
+const SocialLogin = ({ role = 'customer', onSuccess }) => {
   const navigate = useNavigate();
+  const { handleLogin } = useContext(AuthContext); // CONNECT TO BRAIN
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
@@ -21,24 +16,18 @@ const SocialLogin = ({ role = 'customer', redirectTo, onSuccess }) => {
         role,
       });
 
-      // ── Save token AND role ──────────────────────────
-      localStorage.setItem('authToken', res.token);
-      localStorage.setItem('userRole',  res.role);   // ← NEW
-      // ────────────────────────────────────────────────
+      // 1. UPDATE GLOBAL STATE (This handles localStorage internally)
+      // This ensures the Navbar changes to "Logout" immediately
+      handleLogin(res, res.token); 
 
       onSuccess?.(res);
 
-      // ── Redirect based on role ───────────────────────
-      if (res.role === 'nutritionist') {
-        navigate('/Nprofile');
-      } else {
-        navigate('/home');
-      }
-      // ────────────────────────────────────────────────
+      // 2. REDIRECT TO THE DASHBOARD (Not just home)
+      navigate('/home'); 
 
     } catch (err) {
       console.error('Google login failed:', err);
-      alert('Google login failed. Please try again.');
+      alert('Google login failed.');
     }
   };
 
@@ -46,7 +35,7 @@ const SocialLogin = ({ role = 'customer', redirectTo, onSuccess }) => {
     <div className="social-login">
       <GoogleLogin
         onSuccess={handleGoogleSuccess}
-        onError={() => alert('Google login failed. Please try again.')}
+        onError={() => alert('Google login failed.')}
       />
     </div>
   );
