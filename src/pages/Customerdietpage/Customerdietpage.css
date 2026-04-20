@@ -1,0 +1,372 @@
+/* CustomerDietPage.css */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,400;0,600;1,400&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green: #22c55e;
+  --green-light: #dcfce7;
+  --green-dark: #15803d;
+  --slate: #0f172a;
+  --slate-mid: #334155;
+  --slate-light: #64748b;
+  --border: #e2e8f0;
+  --bg: #f8fafc;
+  --white: #ffffff;
+  --radius: 14px;
+  --shadow: 0 1px 3px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
+}
+
+.cdp-root {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--slate);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Loading / error / no plan ── */
+.cdp-loading-screen, .cdp-error-screen, .cdp-no-plan-screen {
+  min-height: 60vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 14px; text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--slate-light);
+}
+.cdp-spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.cdp-no-plan-icon { font-size: 3rem; }
+.cdp-no-plan-screen h2 { font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--slate); }
+
+/* ── Hero ── */
+.cdp-hero {
+  background: linear-gradient(135deg, #0f172a 0%, #134e35 100%);
+  border-radius: 20px;
+  padding: 32px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.cdp-hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 80% 50%, rgba(34,197,94,.18) 0%, transparent 60%);
+}
+.cdp-hero-text { position: relative; z-index: 1; }
+.cdp-hero-text h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.cdp-hero-text p {
+  font-size: .9rem;
+  color: rgba(255,255,255,.65);
+  margin-top: 6px;
+}
+
+/* ── Circular ring ── */
+.cdp-ring-wrap {
+  position: relative;
+  width: 110px; height: 110px;
+  flex-shrink: 0;
+}
+.cdp-ring-label {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.cdp-ring-pct { font-weight: 800; font-size: 1.4rem; color: white; }
+.cdp-ring-sub { font-size: .72rem; color: rgba(255,255,255,.6); }
+
+/* ── Summary grid ── */
+.cdp-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.cdp-summary-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: transform .15s;
+}
+.cdp-summary-card:hover { transform: translateY(-2px); }
+.cdp-sum-icon { font-size: 1.5rem; }
+.cdp-sum-label { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--slate-light); font-weight: 600; }
+.cdp-sum-val   { display: block; font-weight: 800; font-size: 1.15rem; color: var(--slate); margin-top: 2px; }
+
+/* ── Tabs ── */
+.cdp-tabs {
+  display: flex;
+  gap: 6px;
+  background: var(--white);
+  padding: 6px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  width: fit-content;
+}
+.cdp-tab {
+  padding: 9px 24px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--slate-light);
+  cursor: pointer;
+  transition: all .15s;
+  background: transparent;
+}
+.cdp-tab.active {
+  background: var(--slate);
+  color: white;
+  font-weight: 700;
+}
+
+/* ── Tab content ── */
+.cdp-tab-content {
+  display: flex; flex-direction: column; gap: 20px;
+}
+
+.cdp-empty {
+  text-align: center;
+  padding: 48px;
+  background: var(--white);
+  border-radius: var(--radius);
+  color: var(--slate-light);
+  border: 1px dashed var(--border);
+}
+
+/* ── Day block (meals) ── */
+.cdp-day-block {
+  display: flex; flex-direction: column; gap: 12px;
+}
+.cdp-day-block.today .cdp-day-label {
+  color: var(--green-dark);
+  border-color: var(--green);
+}
+
+.cdp-day-label {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: .85rem; font-weight: 700;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+  color: var(--slate-mid);
+}
+.cdp-day-left { display: flex; align-items: center; gap: 8px; }
+.cdp-today-badge {
+  background: var(--green);
+  color: white;
+  font-size: .68rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.cdp-day-progress { font-size: .78rem; color: var(--slate-light); }
+
+.cdp-meals-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+/* ── Meal cards ── */
+.cdp-meal-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  border-left: 4px solid transparent;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: transform .15s, opacity .15s;
+}
+.cdp-meal-card:hover { transform: translateY(-2px); }
+.cdp-meal-card.completed { opacity: .7; }
+
+.type-breakfast { border-left-color: #f59e0b; }
+.type-lunch     { border-left-color: #22c55e; }
+.type-dinner    { border-left-color: #6366f1; }
+.type-snack     { border-left-color: #ec4899; }
+
+.cdp-meal-header { display: flex; align-items: center; justify-content: space-between; }
+.cdp-meal-type   { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--slate-light); }
+.cdp-meal-cal    { font-size: .78rem; font-weight: 600; color: var(--slate-mid); }
+
+.cdp-meal-card h4 { font-size: .95rem; font-weight: 700; }
+.cdp-meal-card p  { font-size: .8rem; color: var(--slate-light); line-height: 1.55; flex: 1; }
+
+.cdp-done-btn {
+  margin-top: 4px;
+  padding: 8px 0;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--slate-mid);
+  cursor: pointer;
+  transition: all .15s;
+  text-align: center;
+}
+.cdp-done-btn:hover:not(:disabled) {
+  border-color: var(--green);
+  color: var(--green-dark);
+  background: var(--green-light);
+}
+.cdp-done-btn.is-done {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+}
+.cdp-done-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ── Exercise day pills ── */
+.cdp-day-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cdp-day-pill {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  background: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--slate-mid);
+  cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: all .15s;
+}
+.cdp-day-pill:hover { border-color: var(--green); color: var(--green-dark); }
+.cdp-day-pill.active {
+  background: var(--slate);
+  border-color: var(--slate);
+  color: white;
+}
+.cdp-pill-count {
+  background: rgba(255,255,255,.2);
+  border-radius: 999px;
+  font-size: .7rem;
+  padding: 1px 6px;
+  font-weight: 800;
+}
+.cdp-day-pill:not(.active) .cdp-pill-count {
+  background: var(--bg);
+  color: var(--slate-light);
+}
+
+/* ── Exercise grid ── */
+.cdp-ex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+/* ── Exercise cards ── */
+.cdp-exercise-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  display: flex; flex-direction: column; gap: 12px;
+  transition: transform .15s;
+}
+.cdp-exercise-card:hover { transform: translateY(-2px); }
+
+.cdp-ex-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.cdp-ex-cat {
+  font-size: .7rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: #3b82f6; display: block; margin-bottom: 4px;
+}
+.cdp-exercise-card h4 { font-size: 1rem; font-weight: 700; }
+.cdp-ex-metas { display: flex; gap: 10px; margin-top: 4px; }
+.cdp-ex-metas span { font-size: .78rem; color: var(--slate-light); }
+
+/* ── Mode toggle ── */
+.cdp-mode-toggle {
+  display: flex;
+  background: var(--bg);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.cdp-mode-toggle button {
+  border: none; cursor: pointer;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .75rem; font-weight: 700;
+  color: var(--slate-light);
+  background: transparent;
+  transition: all .15s;
+}
+.cdp-mode-toggle button.active {
+  background: var(--white);
+  color: var(--slate);
+  box-shadow: var(--shadow);
+}
+
+/* ── Exercise instructions ── */
+.cdp-ex-instructions {
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.cdp-ex-instructions.mode-gym  { background: #eff6ff; border: 1px solid #bfdbfe; }
+.cdp-ex-instructions.mode-home { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.cdp-ex-detail { font-size: .82rem; line-height: 1.55; color: var(--slate-mid); }
+.cdp-ex-instr  { color: var(--slate); }
+
+.cdp-ex-notes {
+  font-size: .8rem;
+  color: var(--slate-light);
+  font-style: italic;
+  padding: 8px 12px;
+  background: #fefce8;
+  border-radius: 8px;
+  border-left: 3px solid #fde047;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .cdp-root { padding: 16px 14px 40px; gap: 16px; }
+  .cdp-hero { flex-direction: column; gap: 20px; padding: 24px; }
+  .cdp-summary-grid { grid-template-columns: repeat(2, 1fr); }
+  .cdp-meals-row { grid-template-columns: 1fr; }
+  .cdp-ex-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .cdp-summary-grid { grid-template-columns: 1fr 1fr; }
+  .cdp-hero-text h1 { font-size: 1.5rem; }
+}

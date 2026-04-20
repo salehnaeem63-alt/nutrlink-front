@@ -16,14 +16,23 @@ import { Calculator } from './pages/Calculator/Calculator';
 import { Profile } from './pages/Profile/Profile';
 import { Aifull } from './pages/Aifull/Aifull';
 import VideoCall from './pages/videoCall';
-import AdminDashboard from './pages/Admindashboard/Admindashboard'
-import { NutriProfile } from './pages/NutrProfile/NutriProfile'
-import { NutriCreateProfile } from './pages/NutrProfile/Nutricreateprofile'
-import { Ndashboard } from './pages/Ndashboard/Ndashboard'
-import Nutritionists from './pages/Nutritionists/Nutritionists'
-import Appointments from './pages/Appointments/Appointments'
+import AdminDashboard from './pages/Admindashboard/Admindashboard';
+import { NutriProfile } from './pages/NutrProfile/NutriProfile';
+import { NutriCreateProfile } from './pages/NutrProfile/Nutricreateprofile';
+import { Ndashboard } from './pages/Ndashboard/Ndashboard';
+import Nutritionists from './pages/Nutritionists/Nutritionists';
+import Appointments from './pages/Appointments/Appointments';
 import ChatPage from './pages/Chat';
 
+// ── FIX: IMPORT THE MISSING SPINNER ──────────────────────────────────────────
+// Note: Adjust this path if your Spinner component is located in a different folder
+import Spinner from './component/Spinner'; 
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── NEW IMPORTS ───────────────────────────────────────────────────────────────
+import CustomerDietPage from './pages/Customerdietpage/Customerdietpage';
+import NutritionistDietPage from './pages/NutritionistsDietPage/NutritionistDietPage';
+// ─────────────────────────────────────────────────────────────────────────────
 
 function App() {
   const { loading } = useContext(AuthContext);
@@ -34,7 +43,6 @@ function App() {
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      {/* NEW: Wrap your router in the AuthProvider */}
       <BrowserRouter>
         <Routes>
           {/* Landing Page */}
@@ -59,19 +67,39 @@ function App() {
           <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
 
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/Nprofile" element={<ProtectedRoute><NutriProfile /></ProtectedRoute>} />
+          {/* Note: The duplicate /Nprofile Route was removed from here */}
           <Route path="/creatNprofile" element={<ProtectedRoute><NutriCreateProfile /></ProtectedRoute>} />
           <Route path="/Ndashboard" element={<ProtectedRoute><Ndashboard /></ProtectedRoute>} />
           <Route path="/Ai" element={<ProtectedRoute><Aifull /></ProtectedRoute>} />
-          
-          {/* NEW: Video Call Route */}
-          <Route 
-            path="/video-call/:appointmentId" 
-            element={<ProtectedRoute><VideoCall /></ProtectedRoute>} 
+
+          {/* Video Call Route */}
+          <Route
+            path="/video-call/:appointmentId"
+            element={<ProtectedRoute><VideoCall /></ProtectedRoute>}
           />
 
           <Route path="/appointments" element={<ProtectedRoute><Appointments /></ProtectedRoute>} />
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+
+          {/* ── NEW DIET PLAN ROUTES ─────────────────────────────────────────── */}
+          <Route
+            path="/CustomerDietPlan"
+            element={
+              <RoleRoute role="customer">
+                <CustomerDietPage />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/NutritionistDietPlan"
+            element={
+              <RoleRoute role="nutritionist">
+                <NutritionistDietPage />
+              </RoleRoute>
+            }
+          />
+          {/* ─────────────────────────────────────────────────────────────────── */}
+
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>

@@ -240,7 +240,7 @@ export async function getGoal() {
     }
 }
 //get customer dite
-export async function getdite(info) {
+export async function getdite() { // <-- Just removed 'info' from the parentheses!
   const token = localStorage.getItem("authToken");
 
   try {
@@ -294,4 +294,31 @@ export async function getCustomerAppointments() {
         throw error;
     }
 }
- 
+ // 🚦 NUTRITIONIST "PEEK" ROUTE
+// 🚦 NUTRITIONIST "PEEK" ROUTE
+export async function getClientDashboardStats(clientId, chartPeriod = 30) {
+  const token = localStorage.getItem("authToken");
+
+  try {
+    const res = await fetch(
+      `http://localhost:5000/nutrlink/api/dashboard/client-peek/${clientId}?days=${chartPeriod}`,
+      {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to get client dashboard stats");
+    }
+
+    return data;
+
+  } catch (error) {
+    console.error("Error getting client dashboard stats:", error);
+    throw error;
+  }
+}

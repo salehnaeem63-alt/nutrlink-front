@@ -11,14 +11,6 @@ const AppointmentsManager = ({ appointments = [], role, refreshData }) => {
     switch (activeTab) {
       case 'history':
         return appointments.filter(appt => ['completed', 'canceled'].includes(appt.status))
-      // case 'history':
-      //   return appointments.filter(appt => {
-      //     const isCompleted = appt.status === 'completed';
-      //     // Only show canceled if there was a customer (meaning it was once booked)
-      //     const isActuallyCanceled = appt.status === 'canceled' && appt.customerId;
-
-      //     return isCompleted || isActuallyCanceled;
-      //   });
       case 'available':
         return appointments.filter(appt => appt.status === 'available')
       default:
@@ -28,9 +20,14 @@ const AppointmentsManager = ({ appointments = [], role, refreshData }) => {
 
   const filteredAppointments = getFilteredAppointments();
 
-  // Temporary function for your form submission
   const handleCreateSlot = async (e) => {
     e.preventDefault();
+
+    // 🚦 HARD SECURITY GUARD: Stop customers immediately
+    if (role !== 'nutritionist') {
+      showAlert('Unauthorized', 'Only nutritionists can create slots.', 'error');
+      return;
+    }
 
     const formData = new FormData(e.target)
     const date = formData.get('date')
@@ -60,12 +57,18 @@ const AppointmentsManager = ({ appointments = [], role, refreshData }) => {
       e.target.reset()
       setActiveTab('available')
     } catch (err) {
-      alert("Failed to create slot. Please check your connection.")
+      showAlert('Error', 'Failed to create slot. Please check your connection.', 'error');
       console.error(err)
     }
   };
 
   const handleDeleteSlot = async (slotId) => {
+    // 🚦 HARD SECURITY GUARD: Stop customers immediately
+    if (role !== 'nutritionist') {
+      showAlert('Unauthorized', 'Only nutritionists can delete slots.', 'error');
+      return;
+    }
+
     const result = await showConfirm(
       "Are you sure?",
       "Do you really want to delete this slot? This action cannot be undone.",
@@ -73,17 +76,16 @@ const AppointmentsManager = ({ appointments = [], role, refreshData }) => {
     );
 
     if (!result.isConfirmed) return;
+    
     try {
       await deleteSlot(slotId)
 
       if (refreshData) await refreshData()
     } catch (err) {
-      alert("Failed to delete the slot. Please try again.")
+      showAlert('Error', 'Failed to delete the slot. Please try again.', 'error');
       console.error(err)
     }
   }
-
-
 
   const formatTimeString = (time24) => {
     let [hours, minutes] = time24.split(':')
@@ -94,7 +96,6 @@ const AppointmentsManager = ({ appointments = [], role, refreshData }) => {
     const formattedHours = hours.toString().padStart(2, '0')
     return `${formattedHours}:${minutes} ${ampm}`
   }
-
 
   return (
     <div className="appointments-manager">
@@ -119,7 +120,8 @@ const AppointmentsManager = ({ appointments = [], role, refreshData }) => {
       </div>
 
       <div className="appointments-content">
-        {activeTab === 'create' ? (
+        {/* Double-check the role here just to be 100% safe! */}
+        {activeTab === 'create' && role === 'nutritionist' ? (
           <div className="create-slot-container">
             <h3>add a New Available Slot</h3>
             <form onSubmit={handleCreateSlot} className='create-slot-form'>
@@ -181,9 +183,10 @@ const AppointmentsManager = ({ appointments = [], role, refreshData }) => {
                             <i className="clock-icon">🕒</i>
                             <span className="appt-time">{appt.timeSlot}</span>
                           </div>
-                          {isHistory && participant && (
+                          {isHistory && participant && role === 'nutritionist' && (
                             <>
-                              <button className='history-delete-btn' onClick={() => handleDeleteSlot(appt._id)} >Remove</button></>
+                              <button className='history-delete-btn' onClick={() => handleDeleteSlot(appt._id)} >Remove</button>
+                            </>
                           )}
                         </div>
                       </div>
@@ -196,17 +199,12 @@ const AppointmentsManager = ({ appointments = [], role, refreshData }) => {
 
                     </div>
                   )
-
                 })}
               </div>
             )}
           </div>
         )}
       </div>
-
-
-
-
     </div>
   )
 }

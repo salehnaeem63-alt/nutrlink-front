@@ -5,9 +5,9 @@ import { AuthContext } from '../../AuthContext';
 import './Navbar.css';
 
 const Navbar = () => {
-  const { isLogin, user, handleLogout } = useContext(AuthContext)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
+  const { isLogin, user, handleLogout } = useContext(AuthContext);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -28,12 +28,22 @@ const Navbar = () => {
   }, []);
 
   // 1. Data Definition: The "Source of Truth"
+  // 💡 FIX: We dynamically set the routes based on the user's role!
   const NAV_MAP = [
     { label: 'Home', to: '/', isPublic: true },
     { label: 'Nutritionists', to: '/nutritionists', isPublic: true },
-    { label: 'Dashboard', to: user?.role === 'nutritionist' ? '/Ndashboard' : '/dashboard', isPublic: false },
+    { 
+      label: 'Dashboard', 
+      to: user?.role === 'nutritionist' ? '/Ndashboard' : '/dashboard', 
+      isPublic: false 
+    },
     { label: 'Appointments', to: '/appointments', isPublic: false },
     { label: 'Calculator', to: '/calculator', isPublic: true },
+    { 
+      label: 'Diet Plan', 
+      to: user?.role === 'nutritionist' ? '/NutritionistDietPlan' : '/CustomerDietPlan', 
+      isPublic: false 
+    },
   ];
 
   // 2. Logic: Filtering based on Auth State
@@ -53,7 +63,9 @@ const Navbar = () => {
         <ul className="navbar__links">
           {visibleLinks.map((link) => (
             <li key={link.to}>
-              <NavLink to={link.to} end={Link.to === '/'}
+              <NavLink 
+                to={link.to} 
+                end={link.to === '/'}
                 className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
               >
                 {link.label}

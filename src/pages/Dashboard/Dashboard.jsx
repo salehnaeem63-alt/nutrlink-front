@@ -10,11 +10,13 @@ import {
   getlogs,
   getlogtoday,
   creatlog,
-  getCustomerAppointments
+  getCustomerAppointments,
+  getClientDashboardStats // <-- ADDED THE NEW API IMPORT
 } from "../../api/progressApi";
 import './Dashboard.css';
 
-const Dashboard = () => {
+// 🚦 ADDED clientId PROP
+const Dashboard = ({ clientId }) => {
   const [summary, setSummary] = useState(null);
   const [todayLog, setTodayLog] = useState(null);
   const [goals, setGoals] = useState([]);
@@ -24,11 +26,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [newGoal, setNewGoal] = useState('');
   const [showGoalInput, setShowGoalInput] = useState(false);
-
-  // Chart time period state - can be 7, 14, 30, or 'monthly'
   const [chartPeriod, setChartPeriod] = useState(30);
-
-  // New log form state
   const [showLogForm, setShowLogForm] = useState(false);
   const [logForm, setLogForm] = useState({
     waterIntake: '',
@@ -38,35 +36,46 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
-  }, [chartPeriod]); // Re-fetch when chart period changes
+  }, [chartPeriod, clientId]); // Re-fetch if chart period or client changes
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
 
-      // Fetch all data
-      const [summaryData, todayData, goalsData, logsData, appointmentsData] = await Promise.all([
-        getsammury(),
-        getlogtoday().catch(() => ({ log: null })),
-        getGoal().catch(() => ({ goals: [] })),
-        getlogs(chartPeriod).catch(() => ({ logs: [] })), // Use selected period
-        getCustomerAppointments().catch(() => ({ appointments: [] }))
-      ]);
+      // 🚦 THE MAGIC SWITCH: Are we peeking at a client, or viewing our own?
+      if (clientId) {
+        // NUTRITIONIST VIEW (Read-Only)
+        const peekData = await getClientDashboardStats(clientId, chartPeriod);
+        
+        setSummary(peekData.summary);
+        setTodayLog(peekData.todayLog || peekData.summary?.todayLog || null);
+        setGoals(peekData.goals || []);
+        setLogHistory(peekData.logs || []);
+        setAppointments(peekData.appointments || []);
+        setDietPlan(peekData.activeDiet || peekData.summary?.activeDiet || null);
 
-      console.log('Summary Data:', summaryData); // Debug
-      console.log('Appointments Data:', appointmentsData); // Debug
-      setSummary(summaryData.summary);
-      setTodayLog(todayData.log || summaryData.summary?.todayLog || null);
-      setGoals(goalsData.goals || []);
-      setLogHistory(logsData.logs || []);
-      setAppointments(appointmentsData.appointments || []);
+      } else {
+        // NORMAL CUSTOMER VIEW (Your original code)
+        const [summaryData, todayData, goalsData, logsData, appointmentsData] = await Promise.all([
+          getsammury(),
+          getlogtoday().catch(() => ({ log: null })),
+          getGoal().catch(() => ({ goals: [] })),
+          getlogs(chartPeriod).catch(() => ({ logs: [] })),
+          getCustomerAppointments().catch(() => ({ appointments: [] }))
+        ]);
 
-      // Get diet plan if available
-      try {
-        const dietData = await getdite();
-        setDietPlan(dietData.diets?.[0] || summaryData.summary?.activeDiet || null);
-      } catch (error) {
-        setDietPlan(summaryData.summary?.activeDiet || null);
+        setSummary(summaryData.summary);
+        setTodayLog(todayData.log || summaryData.summary?.todayLog || null);
+        setGoals(goalsData.goals || []);
+        setLogHistory(logsData.logs || []);
+        setAppointments(appointmentsData.appointments || []);
+
+        try {
+          const dietData = await getdite();
+          setDietPlan(dietData.diets?.[0] || summaryData.summary?.activeDiet || null);
+        } catch (error) {
+          setDietPlan(summaryData.summary?.activeDiet || null);
+        }
       }
 
     } catch (error) {
@@ -76,19 +85,14 @@ const Dashboard = () => {
     }
   };
 
-  const updateChartPeriod = (days) => {
-    setChartPeriod(days);
-  };
+  const updateChartPeriod = (days) => setChartPeriod(days);
 
+  // ACTION HANDLERS (These remain the same, but we will hide the buttons in the UI for nutritionists)
   const handleGoalDone = async (goalId) => {
     try {
       const result = await goalDone({ goal_id: goalId });
-      // Update goals directly from response
-      if (result.goals) {
-        setGoals(result.goals);
-      } else {
-        fetchDashboardData();
-      }
+      if (result.goals) setGoals(result.goals);
+      else fetchDashboardData();
     } catch (error) {
       console.error('Error marking goal as done:', error);
     }
@@ -97,12 +101,8 @@ const Dashboard = () => {
   const handleDeleteGoal = async (goalId) => {
     try {
       const result = await deleteGoal(goalId);
-      // Update goals directly from response
-      if (result.goals) {
-        setGoals(result.goals);
-      } else {
-        fetchDashboardData();
-      }
+      if (result.goals) setGoals(result.goals);
+      else fetchDashboardData();
     } catch (error) {
       console.error('Error deleting goal:', error);
     }
@@ -111,19 +111,12 @@ const Dashboard = () => {
   const handleCreateGoal = async (e) => {
     e.preventDefault();
     if (!newGoal.trim()) return;
-
     try {
       const result = await creategoal({ data: newGoal });
       setNewGoal('');
       setShowGoalInput(false);
-
-      // Update goals directly from response instead of refetching
-      if (result.goals) {
-        setGoals(result.goals);
-      } else {
-        // Fallback: refresh data
-        fetchDashboardData();
-      }
+      if (result.goals) setGoals(result.goals);
+      else fetchDashboardData();
     } catch (error) {
       console.error('Error creating goal:', error);
     }
@@ -148,8 +141,7 @@ const Dashboard = () => {
   const calculateBMI = (weight, height) => {
     if (!weight || !height) return null;
     const heightInMeters = height / 100;
-    const bmi = weight / (heightInMeters * heightInMeters);
-    return bmi.toFixed(1);
+    return (weight / (heightInMeters * heightInMeters)).toFixed(1);
   };
 
   const getBMICategory = (bmi) => {
@@ -174,10 +166,11 @@ const Dashboard = () => {
   if (loading) {
     return (
       <>
-        <Navbar isLogin={true} onLogout={() => {/* handle logout */ }} />
+        {/* Only show Navbar if it's the customer viewing their standalone page */}
+        {!clientId && <Navbar isLogin={true} onLogout={() => {}} />}
         <div className="dashboard-loading">
           <div className="spinner"></div>
-          <p>Loading your dashboard...</p>
+          <p>Loading dashboard...</p>
         </div>
       </>
     );
@@ -199,16 +192,18 @@ const Dashboard = () => {
 
   return (
     <>
-      <Navbar isLogin={true} onLogout={() => {/* handle logout */ }} />
+      {/* 🚦 HIDE NAVBAR IF NUTRITIONIST IS PEEKING */}
+      {!clientId && <Navbar isLogin={true} onLogout={() => {}} />}
 
-      <div className="dashboard">
-        <div className="dashboard__container">
+      <div className="dashboard" style={{ paddingTop: clientId ? '0' : undefined }}>
+        <div className="dashboard__container" style={{ padding: clientId ? '0' : undefined }}>
 
-          {/* Header */}
-          <div className="dashboard__header">
-            <h1>My Dashboard</h1>
-            <p>View your personal health information and track your progress</p>
-          </div>
+          {!clientId && (
+            <div className="dashboard__header">
+              <h1>My Dashboard</h1>
+              <p>View your personal health information and track your progress</p>
+            </div>
+          )}
 
           {/* Profile Card */}
           <div className="profile-card">
@@ -265,7 +260,7 @@ const Dashboard = () => {
           {/* Main Content Grid */}
           <div className="dashboard__grid">
 
-            {/* Row 1: BMI, Weight Journey, Next Appointment */}
+            {/* BMI Card */}
             <div className="dashboard__card bmi-card">
               <h2>BMI</h2>
               <div className="bmi-display">
@@ -318,14 +313,14 @@ const Dashboard = () => {
                 </div>
 
                 <p className="weight-remaining">
-                  {Math.abs(remaining).toFixed(1)} kg remaining to reach your goal
+                  {Math.abs(remaining).toFixed(1)} kg remaining to goal
                 </p>
               </div>
             </div>
 
             {/* Next Appointment */}
             <div className="dashboard__card next-appointment-card">
-              <h2>Next Appointment</h2>
+              <h2>{clientId ? 'Upcoming Appointments' : 'Next Appointment'}</h2>
               {appointments && appointments.length > 0 ? (
                 <div className="appointment-details">
                   <div className="appointment-nutritionist">
@@ -345,9 +340,7 @@ const Dashboard = () => {
                     <div className="appointment-date">
                       <span className="appointment-icon">📅</span>
                       <span>{new Date(appointments[0].date).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
+                        month: 'short', day: 'numeric', year: 'numeric'
                       })}</span>
                     </div>
                     <div className="appointment-time">
@@ -355,53 +348,23 @@ const Dashboard = () => {
                       <span>{appointments[0].timeSlot || 'Time TBD'}</span>
                     </div>
                   </div>
-                  {appointments.length > 1 && (
-                    <div className="appointment-count">
-                      <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '0.75rem 0 0 0', textAlign: 'center' }}>
-                        + {appointments.length - 1} more appointment{appointments.length - 1 > 1 ? 's' : ''}
-                      </p>
-                    </div>
-                  )}
                 </div>
               ) : (
                 <div className="empty-state">
                   <p>📅 No upcoming appointments</p>
-                  <p style={{ fontSize: '0.875rem', color: '#9ca3af', marginTop: '0.5rem' }}>
-                    Schedule a consultation with your nutritionist
-                  </p>
                 </div>
               )}
             </div>
 
-            {/* Combined Progress Charts */}
+            {/* Progress Charts */}
             <div className="dashboard__card dashboard__card--full progress-charts">
               <div className="card-header">
                 <h2>📊 Progress History</h2>
                 <div className="chart-period-selector">
-                  <button
-                    className={`period-btn ${chartPeriod === 7 ? 'active' : ''}`}
-                    onClick={() => updateChartPeriod(7)}
-                  >
-                    7 Days
-                  </button>
-                  <button
-                    className={`period-btn ${chartPeriod === 14 ? 'active' : ''}`}
-                    onClick={() => updateChartPeriod(14)}
-                  >
-                    14 Days
-                  </button>
-                  <button
-                    className={`period-btn ${chartPeriod === 30 ? 'active' : ''}`}
-                    onClick={() => updateChartPeriod(30)}
-                  >
-                    30 Days
-                  </button>
-                  <button
-                    className={`period-btn ${chartPeriod === 'monthly' ? 'active' : ''}`}
-                    onClick={() => updateChartPeriod('monthly')}
-                  >
-                    Monthly
-                  </button>
+                  <button className={`period-btn ${chartPeriod === 7 ? 'active' : ''}`} onClick={() => updateChartPeriod(7)}>7 Days</button>
+                  <button className={`period-btn ${chartPeriod === 14 ? 'active' : ''}`} onClick={() => updateChartPeriod(14)}>14 Days</button>
+                  <button className={`period-btn ${chartPeriod === 30 ? 'active' : ''}`} onClick={() => updateChartPeriod(30)}>30 Days</button>
+                  <button className={`period-btn ${chartPeriod === 'monthly' ? 'active' : ''}`} onClick={() => updateChartPeriod('monthly')}>Monthly</button>
                 </div>
               </div>
 
@@ -409,13 +372,8 @@ const Dashboard = () => {
                 <div className="combined-chart-container">
                   <div className="combined-chart-scroll">
                     {(() => {
-                      // Determine which logs to display
-                      const logsToDisplay = chartPeriod === 'monthly'
-                        ? logHistory
-                        : logHistory.slice(0, chartPeriod);
-
+                      const logsToDisplay = chartPeriod === 'monthly' ? logHistory : logHistory.slice(0, chartPeriod);
                       return logsToDisplay.reverse().map((log, index) => {
-                        // Calculate heights for each metric
                         const dataToUse = chartPeriod === 'monthly' ? logHistory : logHistory.slice(0, chartPeriod);
                         const maxWater = Math.max(...dataToUse.map(l => l.waterIntake || 0), 2000);
                         const maxExercise = Math.max(...dataToUse.map(l => l.exerciseMinutes || 0), 60);
@@ -428,7 +386,6 @@ const Dashboard = () => {
                         const exerciseHeight = ((log.exerciseMinutes || 0) / maxExercise) * 100;
                         const weightHeight = log.weight ? ((log.weight - minWeight) / weightRange) * 100 : 0;
 
-                        // Format date based on view mode
                         const dateObj = new Date(log.date);
                         const dateLabel = chartPeriod === 'monthly'
                           ? dateObj.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
@@ -436,43 +393,23 @@ const Dashboard = () => {
 
                         return (
                           <div key={log._id || index} className="combined-bar-group">
-                            <span className="bar-group__date bar-group__date--top">
-                              {dateLabel}
-                            </span>
-
+                            <span className="bar-group__date bar-group__date--top">{dateLabel}</span>
                             <div className="bar-group-container">
-                              {/* Water Bar */}
                               <div className="mini-bar-container">
                                 <span className="mini-bar__icon">💧</span>
-                                <div
-                                  className="mini-bar mini-bar--water"
-                                  style={{ height: `${Math.max(waterHeight, 5)}%` }}
-                                  title={`Water: ${log.waterIntake || 0}ml on ${dateObj.toLocaleDateString()}`}
-                                >
+                                <div className="mini-bar mini-bar--water" style={{ height: `${Math.max(waterHeight, 5)}%` }} title={`Water: ${log.waterIntake || 0}ml on ${dateObj.toLocaleDateString()}`}>
                                   <span className="mini-bar__value">{log.waterIntake || 0}</span>
                                 </div>
                               </div>
-
-                              {/* Exercise Bar */}
                               <div className="mini-bar-container">
                                 <span className="mini-bar__icon">🏃</span>
-                                <div
-                                  className="mini-bar mini-bar--exercise"
-                                  style={{ height: `${Math.max(exerciseHeight, 5)}%` }}
-                                  title={`Exercise: ${log.exerciseMinutes || 0} min on ${dateObj.toLocaleDateString()}`}
-                                >
+                                <div className="mini-bar mini-bar--exercise" style={{ height: `${Math.max(exerciseHeight, 5)}%` }} title={`Exercise: ${log.exerciseMinutes || 0} min on ${dateObj.toLocaleDateString()}`}>
                                   <span className="mini-bar__value">{log.exerciseMinutes || 0}</span>
                                 </div>
                               </div>
-
-                              {/* Weight Bar */}
                               <div className="mini-bar-container">
                                 <span className="mini-bar__icon">⚖️</span>
-                                <div
-                                  className="mini-bar mini-bar--weight"
-                                  style={{ height: `${Math.max(weightHeight, 5)}%` }}
-                                  title={`Weight: ${log.weight || 'N/A'}kg on ${dateObj.toLocaleDateString()}`}
-                                >
+                                <div className="mini-bar mini-bar--weight" style={{ height: `${Math.max(weightHeight, 5)}%` }} title={`Weight: ${log.weight || 'N/A'}kg on ${dateObj.toLocaleDateString()}`}>
                                   <span className="mini-bar__value">{log.weight || '-'}</span>
                                 </div>
                               </div>
@@ -482,209 +419,107 @@ const Dashboard = () => {
                       });
                     })()}
                   </div>
-
-                  {/* Legend */}
                   <div className="chart-legend">
-                    <div className="legend-item">
-                      <span className="legend-color legend-color--water"></span>
-                      <span>💧 Water (ml)</span>
-                    </div>
-                    <div className="legend-item">
-                      <span className="legend-color legend-color--exercise"></span>
-                      <span>🏃 Exercise (min)</span>
-                    </div>
-                    <div className="legend-item">
-                      <span className="legend-color legend-color--weight"></span>
-                      <span>⚖️ Weight (kg)</span>
-                    </div>
-                    {chartPeriod === 'monthly' && (
-                      <div className="legend-note">
-                        <span>📅 Showing last day of each month</span>
-                      </div>
-                    )}
+                    <div className="legend-item"><span className="legend-color legend-color--water"></span><span>💧 Water (ml)</span></div>
+                    <div className="legend-item"><span className="legend-color legend-color--exercise"></span><span>🏃 Exercise (min)</span></div>
+                    <div className="legend-item"><span className="legend-color legend-color--weight"></span><span>⚖️ Weight (kg)</span></div>
                   </div>
                 </div>
               ) : (
                 <div className="empty-state">
                   <p>📊 No progress data available yet</p>
-                  <p style={{ fontSize: '0.875rem', color: '#9ca3af', marginTop: '0.5rem' }}>
-                    Start logging your daily activities to see your progress here!
-                  </p>
                 </div>
               )}
             </div>
 
-            {/* Row 2: Log Today's Activity, My Goals, Active Diet Plan */}
-
-            {/* Log Today's Activity */}
-            <div className="dashboard__card">
-              <div className="card-header">
-                <h2>Log Today's Activity</h2>
-              </div>
-
-              {showLogForm ? (
-                <form className="log-form" onSubmit={handleCreateLog}>
-                  <div className="form-group">
-                    <label>💧 Water Intake (ml)</label>
-                    <input
-                      type="number"
-                      value={logForm.waterIntake}
-                      onChange={(e) => setLogForm({ ...logForm, waterIntake: e.target.value })}
-                      placeholder="e.g., 2000"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>🏃 Exercise (minutes)</label>
-                    <input
-                      type="number"
-                      value={logForm.exerciseMinutes}
-                      onChange={(e) => setLogForm({ ...logForm, exerciseMinutes: e.target.value })}
-                      placeholder="e.g., 30"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>⚖️ Weight (kg)</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      value={logForm.weight}
-                      onChange={(e) => setLogForm({ ...logForm, weight: e.target.value })}
-                      placeholder="e.g., 75.5"
-                      required
-                    />
-                  </div>
-                  <div className="log-form__actions">
-                    <button type="submit" className="btn btn--primary">Save Log</button>
-                    <button
-                      type="button"
-                      className="btn btn--secondary"
-                      onClick={() => {
-                        setShowLogForm(false);
-                        setLogForm({ waterIntake: '', exerciseMinutes: '', weight: '' });
-                      }}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <div>
-                  {todayLog ? (
-                    <div className="activity-grid">
-                      <div className="activity-item">
-                        <div className="activity-icon">💧</div>
-                        <div className="activity-details">
-                          <span className="activity-value">{todayLog.waterIntake}</span>
-                          <span className="activity-label">ml water</span>
-                        </div>
-                      </div>
-                      <div className="activity-item">
-                        <div className="activity-icon">🏃</div>
-                        <div className="activity-details">
-                          <span className="activity-value">{todayLog.exerciseMinutes}</span>
-                          <span className="activity-label">min exercise</span>
-                        </div>
-                      </div>
-                      <div className="activity-item">
-                        <div className="activity-icon">⚖️</div>
-                        <div className="activity-details">
-                          <span className="activity-value">{todayLog.weight}</span>
-                          <span className="activity-label">kg weight</span>
-                        </div>
-                      </div>
+            {/* 🚦 HIDE "LOG ACTIVITY" BOX IF NUTRITIONIST IS PEEKING */}
+            {!clientId && (
+              <div className="dashboard__card">
+                <div className="card-header">
+                  <h2>Log Today's Activity</h2>
+                </div>
+                {showLogForm ? (
+                  <form className="log-form" onSubmit={handleCreateLog}>
+                    <div className="form-group">
+                      <label>💧 Water Intake (ml)</label>
+                      <input type="number" value={logForm.waterIntake} onChange={(e) => setLogForm({ ...logForm, waterIntake: e.target.value })} required />
                     </div>
-                  ) : (
-                    <p className="empty-state">No activity logged today</p>
-                  )}
-                  <button
-                    className="btn btn--primary btn--full"
-                    onClick={() => setShowLogForm(true)}
-                    style={{ marginTop: '1rem' }}
-                  >
-                    + Add Today's Log
-                  </button>
-                </div>
-              )}
-            </div>
+                    <div className="form-group">
+                      <label>🏃 Exercise (minutes)</label>
+                      <input type="number" value={logForm.exerciseMinutes} onChange={(e) => setLogForm({ ...logForm, exerciseMinutes: e.target.value })} required />
+                    </div>
+                    <div className="form-group">
+                      <label>⚖️ Weight (kg)</label>
+                      <input type="number" step="0.1" value={logForm.weight} onChange={(e) => setLogForm({ ...logForm, weight: e.target.value })} required />
+                    </div>
+                    <div className="log-form__actions">
+                      <button type="submit" className="btn btn--primary">Save Log</button>
+                      <button type="button" className="btn btn--secondary" onClick={() => setShowLogForm(false)}>Cancel</button>
+                    </div>
+                  </form>
+                ) : (
+                  <div>
+                    {todayLog ? (
+                      <div className="activity-grid">
+                        <div className="activity-item"><div className="activity-icon">💧</div><div className="activity-details"><span className="activity-value">{todayLog.waterIntake}</span><span className="activity-label">ml water</span></div></div>
+                        <div className="activity-item"><div className="activity-icon">🏃</div><div className="activity-details"><span className="activity-value">{todayLog.exerciseMinutes}</span><span className="activity-label">min exercise</span></div></div>
+                        <div className="activity-item"><div className="activity-icon">⚖️</div><div className="activity-details"><span className="activity-value">{todayLog.weight}</span><span className="activity-label">kg weight</span></div></div>
+                      </div>
+                    ) : (
+                      <p className="empty-state">No activity logged today</p>
+                    )}
+                    <button className="btn btn--primary btn--full" onClick={() => setShowLogForm(true)} style={{ marginTop: '1rem' }}>+ Add Today's Log</button>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Goals Section */}
             <div className="dashboard__card">
               <div className="card-header">
-                <h2>My Goals</h2>
-                <button
-                  className="btn btn--small btn--primary"
-                  onClick={() => setShowGoalInput(!showGoalInput)}
-                >
-                  + Add
-                </button>
+                <h2>{clientId ? 'Client Goals' : 'My Goals'}</h2>
+                {/* 🚦 HIDE ADD GOAL BUTTON IF NUTRITIONIST IS PEEKING */}
+                {!clientId && (
+                  <button className="btn btn--small btn--primary" onClick={() => setShowGoalInput(!showGoalInput)}>
+                    + Add
+                  </button>
+                )}
               </div>
 
-              {showGoalInput && (
+              {showGoalInput && !clientId && (
                 <form className="goal-form" onSubmit={handleCreateGoal}>
-                  <input
-                    type="text"
-                    placeholder="Enter your goal..."
-                    value={newGoal}
-                    onChange={(e) => setNewGoal(e.target.value)}
-                    className="goal-input"
-                  />
+                  <input type="text" placeholder="Enter your goal..." value={newGoal} onChange={(e) => setNewGoal(e.target.value)} className="goal-input" />
                   <div className="goal-form__actions">
                     <button type="submit" className="btn btn--primary">Add</button>
-                    <button
-                      type="button"
-                      className="btn btn--secondary"
-                      onClick={() => {
-                        setShowGoalInput(false);
-                        setNewGoal('');
-                      }}
-                    >
-                      Cancel
-                    </button>
+                    <button type="button" className="btn btn--secondary" onClick={() => setShowGoalInput(false)}>Cancel</button>
                   </div>
                 </form>
               )}
 
               <div className="goals-summary">
                 <span className="goals-summary__stat">Total: {goalsSummary.total || 0}</span>
-                <span className="goals-summary__stat goals-summary__stat--done">
-                  Done: {goalsSummary.done || 0}
-                </span>
-                <span className="goals-summary__stat goals-summary__stat--pending">
-                  Pending: {goalsSummary.pending || 0}
-                </span>
+                <span className="goals-summary__stat goals-summary__stat--done">Done: {goalsSummary.done || 0}</span>
+                <span className="goals-summary__stat goals-summary__stat--pending">Pending: {goalsSummary.pending || 0}</span>
               </div>
 
               <div className="goals-list">
                 {goals.length === 0 ? (
-                  <p className="empty-state">No goals yet. Set your first goal!</p>
+                  <p className="empty-state">No goals yet.</p>
                 ) : (
                   goals.slice(0, 3).map((goal) => (
                     <div key={goal._id} className={`goal-item ${goal.status === 'done' ? 'goal-item--done' : ''}`}>
                       <div className="goal-item__content">
                         <span className="goal-item__text">{goal.data}</span>
-                        <span className={`goal-item__status goal-item__status--${goal.status}`}>
-                          {goal.status}
-                        </span>
+                        <span className={`goal-item__status goal-item__status--${goal.status}`}>{goal.status}</span>
                       </div>
                       <div className="goal-item__actions">
-                        {goal.status !== 'done' && (
-                          <button
-                            className="btn-icon btn-icon--success"
-                            onClick={() => handleGoalDone(goal._id)}
-                            title="Mark as done"
-                          >
-                            ✓
-                          </button>
+                        {/* 🚦 HIDE COMPLETE/DELETE BUTTONS IF NUTRITIONIST IS PEEKING */}
+                        {!clientId && goal.status !== 'done' && (
+                          <button className="btn-icon btn-icon--success" onClick={() => handleGoalDone(goal._id)} title="Mark as done">✓</button>
                         )}
-                        <button
-                          className="btn-icon btn-icon--danger"
-                          onClick={() => handleDeleteGoal(goal._id)}
-                          title="Delete goal"
-                        >
-                          ✕
-                        </button>
+                        {!clientId && (
+                          <button className="btn-icon btn-icon--danger" onClick={() => handleDeleteGoal(goal._id)} title="Delete goal">✕</button>
+                        )}
                       </div>
                     </div>
                   ))
@@ -692,7 +527,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Active Diet Plan - Compact Version */}
+            {/* Active Diet Plan */}
             {activeDiet && (
               <div className="dashboard__card diet-plan-compact">
                 <h2>Active Diet Plan</h2>
@@ -702,33 +537,20 @@ const Dashboard = () => {
                       {activeDiet.nutritionistId?.username?.charAt(0).toUpperCase() || 'N'}
                     </div>
                     <div className="diet-compact-details">
-                      <p className="nutritionist-name">
-                        {activeDiet.nutritionistId?.username || 'Nutritionist'}
-                      </p>
-                      <span className={`diet-status diet-status--${activeDiet.status}`}>
-                        {activeDiet.status}
-                      </span>
+                      <p className="nutritionist-name">{activeDiet.nutritionistId?.username || 'Nutritionist'}</p>
+                      <span className={`diet-status diet-status--${activeDiet.status}`}>{activeDiet.status}</span>
                     </div>
                   </div>
-
                   <div className="diet-compact-meals">
                     <p className="diet-compact-label">Today's Meals</p>
                     {activeDiet.meals && activeDiet.meals.filter(m => {
                       const mealDate = new Date(m.date);
                       const today = new Date();
-                      mealDate.setUTCHours(0, 0, 0, 0);
-                      today.setUTCHours(0, 0, 0, 0);
-                      return mealDate.getTime() === today.getTime();
+                      return mealDate.setUTCHours(0, 0, 0, 0) === today.setUTCHours(0, 0, 0, 0);
                     }).length > 0 ? (
                       <div className="compact-meal-list">
                         {activeDiet.meals
-                          .filter(m => {
-                            const mealDate = new Date(m.date);
-                            const today = new Date();
-                            mealDate.setUTCHours(0, 0, 0, 0);
-                            today.setUTCHours(0, 0, 0, 0);
-                            return mealDate.getTime() === today.getTime();
-                          })
+                          .filter(m => new Date(m.date).setUTCHours(0,0,0,0) === new Date().setUTCHours(0,0,0,0))
                           .slice(0, 3)
                           .map((meal) => (
                             <div key={meal._id} className="compact-meal-item">
