@@ -1,12 +1,11 @@
 @import "tailwindcss";
 
-@source "../index.html";
-@source "./**/*.{js,jsx,ts,tsx}";
+/* 💡 FIX: Use absolute root-relative paths */
+@source "/index.html";
+@source "/src/**/*.{js,jsx,ts,tsx}";
 
-/* You can keep your background gradient here if you like it */
 body {
   margin: 0;
   background: linear-gradient(180deg, #e8f5e9 0%, #f1f8f4 100%);
   min-height: 100vh;
 }
-

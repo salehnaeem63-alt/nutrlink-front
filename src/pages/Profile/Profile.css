@@ -1,7 +1,8 @@
 :root {
   --green-main: #22c55e;
   --green-hover: #16a34a;
-  --bg-color: #f1f5f9; /* Slate background for the page */
+  --bg-color: #f1f5f9;
+  /* Slate background for the page */
   --card-bg: #ffffff;
   --text-main: #0f172a;
   --text-muted: #64748b;
@@ -36,6 +37,7 @@
   height: 240px;
   background-color: #cbd5e1;
 }
+
 .profile-cover img {
   width: 100%;
   height: 100%;
@@ -47,7 +49,8 @@
   display: flex;
   align-items: flex-end;
   padding: 0 40px 30px;
-  margin-top: -76px; /* Crucial for the overlap effect */
+  margin-top: -76px;
+  /* Crucial for the overlap effect */
   border-bottom: 1px solid var(--border-light);
   gap: 24px;
 }
@@ -61,16 +64,35 @@
   overflow: hidden;
   flex-shrink: 0;
 }
+
 .avatar-container img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+.avatar-container .profile-change-btn {
+  position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: #00C853;
+    border: 3px solid white;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease
+}
+
 .header-info {
   flex: 1;
   padding-bottom: 10px;
 }
+
 .header-info h1 {
   text-transform: capitalize;
   font-size: 2rem;
@@ -78,11 +100,13 @@
   margin: 0 0 4px;
   font-weight: 700;
 }
+
 .header-subtitle {
   color: var(--text-muted);
   font-size: 1.1rem;
   margin: 0 0 12px;
 }
+
 .header-badges {
   display: flex;
   gap: 12px;
@@ -98,7 +122,8 @@
   grid-template-columns: 300px 1fr;
   gap: 32px;
   padding: 40px;
-  background-color: #f8fafc; /* Slightly darker than cards for contrast */
+  background-color: #f8fafc;
+  /* Slightly darker than cards for contrast */
 }
 
 /* ── SIDEBAR ── */
@@ -107,20 +132,24 @@
   flex-direction: column;
   gap: 20px;
 }
+
 .spec-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
+
 .spec-list li {
   padding: 12px 0;
   border-bottom: 1px solid var(--border-light);
   color: var(--text-muted);
   font-size: 0.95rem;
 }
+
 .spec-list li:last-child {
   border-bottom: none;
 }
+
 .spec-icon {
   margin-right: 8px;
 }
@@ -131,6 +160,7 @@
   gap: 8px;
   margin-top: 12px;
 }
+
 .allergy-tag {
   background: #fee2e2;
   color: #991b1b;
@@ -157,10 +187,12 @@
   text-align: center;
   padding: 30px;
 }
+
 .metric-card.highlight {
   background-color: #ecfdf5;
   border: 1px solid #a7f3d0;
 }
+
 .metric-label {
   color: var(--text-muted);
   font-size: 0.9rem;
@@ -168,6 +200,7 @@
   font-weight: 700;
   margin: 0 0 8px;
 }
+
 .metric-value {
   font-size: 3rem;
   color: var(--text-main);
@@ -175,9 +208,11 @@
   font-weight: 800;
   line-height: 1;
 }
+
 .highlight .metric-value {
   color: var(--green-hover);
 }
+
 .metric-unit {
   font-size: 1.2rem;
   color: var(--text-muted);
@@ -196,8 +231,9 @@
   border: 1px solid var(--border-light);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
+
 .card-title {
   font-size: 1.1rem;
   color: var(--text-main);
@@ -216,6 +252,7 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .primary-btn:hover {
   background-color: var(--green-hover);
 }
@@ -226,9 +263,21 @@
   font-size: 0.85rem;
   font-weight: 600;
 }
-.badge--male { background: #eff6ff; color: #1d4ed8; }
-.badge--female { background: #fdf2f8; color: #be185d; }
-.badge--neutral { background: #f1f5f9; color: #475569; }
+
+.badge--male {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.badge--female {
+  background: #fdf2f8;
+  color: #be185d;
+}
+
+.badge--neutral {
+  background: #f1f5f9;
+  color: #475569;
+}
 
 /* Progress Bars */
 .progress-track {
@@ -239,11 +288,13 @@
   overflow: hidden;
   margin-top: 16px;
 }
+
 .progress-fill {
   height: 100%;
   border-radius: 99px;
   transition: width 1s ease;
 }
+
 .green-fill {
   background-color: var(--green-main);
 }
@@ -253,11 +304,13 @@
   align-items: baseline;
   gap: 12px;
 }
+
 .bmi-number {
   font-size: 2.5rem;
   margin: 0;
   font-weight: 800;
 }
+
 .bmi-text {
   font-weight: 700;
   text-transform: uppercase;
@@ -269,6 +322,7 @@
   font-weight: 700;
   color: var(--text-muted);
 }
+
 .journey-footer {
   text-align: center;
   margin: 16px 0 0;
@@ -283,6 +337,7 @@
   justify-content: center;
   align-items: center;
 }
+
 .loader-spinner {
   width: 40px;
   height: 40px;
@@ -291,22 +346,30 @@
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   .profile-body-grid {
     grid-template-columns: 1fr;
   }
+
   .profile-header-overlap {
     flex-direction: column;
     align-items: center;
     text-align: center;
     padding: 0 20px 20px;
   }
+
   .header-badges {
     justify-content: center;
   }
+
   .modules-grid {
     grid-template-columns: 1fr;
   }

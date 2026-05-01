@@ -9,7 +9,7 @@ import { formatLastSeen } from '../../utils/chatActivity';
 const getOtherUser = (participants, currentUserId) => {
   if (!participants || !currentUserId || !Array.isArray(participants)) return null;
   const myId = currentUserId.toString();
-  
+
   const other = participants.find(p => {
     const pId = (p?._id || p?.id || p)?.toString();
     return pId && pId !== myId;
@@ -47,7 +47,7 @@ const ChatBox = ({ selectedChat, setConversations, setSelectedChat }) => {
       if (selectedChat?._id?.toString() === newMessageReceived.conversationId?.toString()) {
         setMessages((prev) => [...prev, newMessageReceived]);
       }
-      
+
       // Update sidebar preview
       setConversations((prev) => {
         const otherChats = prev.filter(c => c._id?.toString() !== newMessageReceived.conversationId?.toString());
@@ -122,7 +122,7 @@ const ChatBox = ({ selectedChat, setConversations, setSelectedChat }) => {
       // 4. Destructure response to promote Ghost to Real if necessary
       const { newMessage, conversationId } = await sendMessage(otherUser?._id, text, selectedChat?._id);
 
-      socket.emit('new message', newMessage);
+      socket.emit('new message', { ...newMessage, recipientId: otherUser?._id });
       setMessages(prev => [...prev, newMessage]);
       setText("");
 

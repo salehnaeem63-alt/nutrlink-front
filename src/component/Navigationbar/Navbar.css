@@ -316,6 +316,43 @@
   color: #dc2626 !important;
 }
 
+/* ── Messages Icon & Badge ── */
+.navbar__user-group {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* Ensures spacing between the message icon and avatar */
+}
+
+.navbar__messages-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--nav-text-dark); /* Matches your existing dark text color */
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.navbar__messages-btn:hover {
+  color: var(--nav-green); /* Matches your brand green */
+  transform: translateY(-1px);
+}
+
+.navbar__badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background-color: #ef4444; /* Standard alert red */
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 12px;
+  border: 2px solid white; /* Creates a clean cutout effect */
+  line-height: 1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+} 
+
 /* ── Responsive Design ── */
 @media (max-width: 900px) {
   .navbar {
@@ -339,3 +376,4 @@
     width: 24px;
   }
 }
+

@@ -64,9 +64,9 @@ const Home = () => {
   return (
     <div className="home-page">
       <Navbar />
-      
+
       <Aibot />
-      
+
       <Hero />
 
       <HomeSchedule />

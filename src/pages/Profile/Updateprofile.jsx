@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { updateCustomerProfile, getCustomerProfile } from "../../api/customerapi";
 import "../CreateProfile/CreateProfile";
+// IMPORTANT: Adjust this path to match where you saved your Swal functions
+import { showAlert } from "../../utils/alertService"; 
 
 export const Updateprofile = () => {
   const navigate = useNavigate();
@@ -15,7 +17,8 @@ export const Updateprofile = () => {
     height: "",
     currentWeight: "",
     targetWeight: "",
-    allergies: ""
+    allergies: [], 
+    primaryGoal: "" 
   });
 
   /* ── Pre-fill the form with the user's existing profile ── */
@@ -30,9 +33,8 @@ export const Updateprofile = () => {
             height: p.height ?? "",
             currentWeight: p.currentWeight ?? "",
             targetWeight: p.targetWeight ?? "",
-            allergies: Array.isArray(p.allergies)
-              ? p.allergies[0] ?? ""   // select supports one value
-              : p.allergies ?? ""
+            allergies: Array.isArray(p.allergies) ? p.allergies : [],
+            primaryGoal: p.primaryGoal ?? "" 
           });
         }
       } catch (err) {
@@ -48,7 +50,20 @@ export const Updateprofile = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  /* ── Only send fields that have a value (backend needs at least one) ── */
+  /* ── Toggle handler for pill UI ── */
+  const handleAllergyToggle = (allergyValue) => {
+    setFormData((prev) => {
+      const currentAllergies = prev.allergies || [];
+      
+      if (currentAllergies.includes(allergyValue)) {
+        return { ...prev, allergies: currentAllergies.filter(item => item !== allergyValue) };
+      } else {
+        return { ...prev, allergies: [...currentAllergies, allergyValue] };
+      }
+    });
+  };
+
+  /* ── Only send fields that have a value ── */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -61,7 +76,7 @@ export const Updateprofile = () => {
     });
 
     if (Object.keys(payload).length === 0) {
-      alert("Please update at least one field.");
+      showAlert("No Changes", "Please update at least one field.", "warning");
       setLoading(false);
       return;
     }
@@ -69,10 +84,11 @@ export const Updateprofile = () => {
     try {
       const result = await updateCustomerProfile(payload);
       console.log(result);
-      alert("Profile updated successfully");
+      // Wait for the user to click OK before navigating away
+      await showAlert("Success!", "Profile updated successfully.", "success");
       navigate("/profile");
     } catch (error) {
-      alert(error.message);
+      showAlert("Update Failed", error.message, "error");
     } finally {
       setLoading(false);
     }
@@ -97,7 +113,6 @@ export const Updateprofile = () => {
       <div className="cp-wrapper">
         <div className="cp-card">
 
-          {/* Header */}
           <div className="cp-header">
             <div className="cp-icon">✏️</div>
             <h1 className="cp-title">Update Your Profile</h1>
@@ -106,7 +121,6 @@ export const Updateprofile = () => {
 
           <form onSubmit={handleSubmit} className="cp-form">
 
-            {/* Row: Age + Gender */}
             <div className="cp-row">
               <div className="cp-field-group">
                 <FormField
@@ -117,6 +131,9 @@ export const Updateprofile = () => {
                   value={formData.age}
                   onChange={handleChange}
                   placeholder="e.g. 25"
+                  min="12"
+                  max="120"
+                  required
                 />
               </div>
 
@@ -136,7 +153,6 @@ export const Updateprofile = () => {
               </div>
             </div>
 
-            {/* Height */}
             <FormField
               label="Height (cm)"
               id="height"
@@ -145,9 +161,10 @@ export const Updateprofile = () => {
               value={formData.height}
               onChange={handleChange}
               placeholder="e.g. 173"
+              min="100"
+              max="250"
             />
 
-            {/* Row: Current + Target Weight */}
             <div className="cp-row">
               <div className="cp-field-group">
                 <FormField
@@ -158,7 +175,9 @@ export const Updateprofile = () => {
                   value={formData.currentWeight}
                   onChange={handleChange}
                   placeholder="e.g. 85"
-                />
+                  min="30"
+                  max="300"
+                  />
               </div>
               <div className="cp-field-group">
                 <FormField
@@ -169,27 +188,67 @@ export const Updateprofile = () => {
                   value={formData.targetWeight}
                   onChange={handleChange}
                   placeholder="e.g. 75"
+                  min="30"
+                  max="300"
                 />
               </div>
             </div>
 
-            {/* Allergies */}
-            <div>
-              <label className="cp-label" htmlFor="allergies">Allergies</label>
+            {/* Primary Goal Select */}
+            <div className="cp-field-group" style={{ marginBottom: '15px' }}>
+              <label className="cp-label" htmlFor="primaryGoal">Primary Goal</label>
               <select
-                id="allergies"
-                name="allergies"
-                value={formData.allergies}
+                id="primaryGoal"
+                name="primaryGoal"
+                value={formData.primaryGoal}
                 onChange={handleChange}
                 className="cp-select"
               >
-                <option value="">No allergies</option>
-                <option value="peanuts">Peanuts</option>
-                <option value="dairy">Dairy</option>
+                <option value="" disabled>Select your main goal</option>
+                <option value="Weight Loss">Weight Loss</option>
+                <option value="Muscle Building">Muscle Building</option>
+                <option value="Clinical Nutrition">Clinical Nutrition</option>
+                <option value="Sports Nutrition">Sports Nutrition</option>
+                <option value="General Health">General Health</option>
+                <option value="Diabetic Diet">Diabetic Diet</option>
+                <option value="Pregnancy Nutrition">Pregnancy Nutrition</option>
+                <option value="Vegan Nutrition">Vegan Nutrition</option>
               </select>
             </div>
 
-            {/* Buttons */}
+            {/* Pill/Box Toggle for Allergies */}
+            <div className="cp-field-group" style={{ marginBottom: '20px' }}>
+              <label className="cp-label">Allergies</label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '10px' }}>
+                
+                {['peanuts', 'tree nuts', 'dairy', 'eggs', 'soy', 'wheat', 'gluten', 'fish', 'shellfish', 'sesame'].map((allergy) => {
+                  const isSelected = formData.allergies?.includes(allergy);
+                  
+                  return (
+                    <div
+                      key={allergy}
+                      onClick={() => handleAllergyToggle(allergy)}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        border: `2px solid ${isSelected ? '#10b981' : '#e5e7eb'}`,
+                        backgroundColor: isSelected ? '#d1fae5' : '#ffffff',
+                        color: isSelected ? '#065f46' : '#374151',
+                        cursor: 'pointer',
+                        fontWeight: '500',
+                        textTransform: 'capitalize',
+                        transition: 'all 0.2s ease',
+                        userSelect: 'none'
+                      }}
+                    >
+                      {allergy}
+                    </div>
+                  );
+                })}
+
+              </div>
+            </div>
+
             <div className="cp-actions">
               <button
                 type="button"
@@ -210,6 +269,7 @@ export const Updateprofile = () => {
             </div>
 
           </form>
+
         </div>
       </div>
     </div>

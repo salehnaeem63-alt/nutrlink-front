@@ -53,6 +53,13 @@ export const updateCustomerProfile = async (info) => {
   return data
 }
 
+export const updateProfilePicture = async (file) => {
+  const formData = new FormData()
+  formData.append('profilePic', file)
+
+  const { data } = await api.put('/profile/profile-picture', formData)
+  return data
+}
 
 /* ── GOAL FUNCTIONS ── */
 

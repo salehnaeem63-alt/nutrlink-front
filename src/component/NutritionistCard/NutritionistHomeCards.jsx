@@ -4,7 +4,7 @@ import { AuthContext } from '../../AuthContext';
 import { showAlert } from '../../utils/alertService';
 import './NutritionistHomeCards.css';
 
-const NutritionistCard = ({ nutritionist }) => {
+const NutritionistHomeCards = ({ nutritionist }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useContext(AuthContext);
   const isLogin = !!user;
@@ -82,13 +82,14 @@ const NutritionistCard = ({ nutritionist }) => {
         </div>
       </div>
 
-      <BookingModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        nutritionist={nutritionist}
-      />
+      {isModalOpen && (
+        <BookingModal
+          nutritionistId={nutritionist.user._id}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </>
   );
 };
 
-export default NutritionistCard;
+export default NutritionistHomeCards;

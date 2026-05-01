@@ -5,7 +5,7 @@ import { useSocket } from '../../SocketContext';
 import { Search, ChevronLeft, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-// 1. Helper moved to the TOP to prevent Hoisting Errors
+// Helper to get the other user in a conversation
 const getOtherUser = (participants, currentUserId) => {
   if (!participants || !currentUserId || !Array.isArray(participants)) return null;
 
@@ -63,18 +63,14 @@ const Sidebar = ({ conversations, setConversations, setSelectedChat, selectedCha
         {conversations.length > 0 ? (
           conversations.map((chat) => {
             const otherUser = getOtherUser(chat.participants, user?._id);
-            
-            // 2. Standardize ID comparison for Active state
+
             const isActive = selectedChat?._id?.toString() === chat._id?.toString();
-            
-            // 3. Robust Online Check
             const isOnline = onlineUsers.some(u => u.userId === otherUser?._id?.toString());
-            
+
             const lastMessage = chat.lastMessage;
             const isSentByMe = lastMessage?.sender?.toString() === user?._id?.toString();
             const isUnread = lastMessage && !lastMessage.seen && !isSentByMe;
 
-            // 4. Fallback Key for Ghost Chats
             const chatKey = chat._id || `ghost-${otherUser?._id}`;
 
             return (
@@ -94,10 +90,10 @@ const Sidebar = ({ conversations, setConversations, setSelectedChat, selectedCha
                   ${isActive ? 'bg-emerald-50 shadow-sm' : 'hover:bg-slate-50'}`}
               >
                 <div className="relative shrink-0">
-                  <img 
-                    src={otherUser?.profilePic || 'https://ui-avatars.com/api/?name=' + (otherUser?.username || 'U')} 
-                    alt="" 
-                    className={`size-12 object-cover rounded-full border-2 ${isActive ? 'border-emerald-200' : 'border-transparent'}`} 
+                  <img
+                    src={otherUser?.profilePic || 'https://ui-avatars.com/api/?name=' + (otherUser?.username || 'U')}
+                    alt=""
+                    className={`size-12 object-cover rounded-full border-2 ${isActive ? 'border-emerald-200' : 'border-transparent'}`}
                   />
                   {isOnline && <span className="absolute bottom-0 right-0 size-3.5 bg-emerald-500 rounded-full border-2 border-white"></span>}
                 </div>
@@ -109,6 +105,11 @@ const Sidebar = ({ conversations, setConversations, setSelectedChat, selectedCha
                     {lastMessage ? (isSentByMe ? 'You: ' : '') + lastMessage.text : 'Start a conversation'}
                   </p>
                 </div>
+                {chat.unreadCount > 0 && (
+                  <div className="shrink-0 min-w-[20px] h-5 bg-emerald-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                    {chat.unreadCount > 99 ? '99+' : chat.unreadCount}
+                  </div>
+                )}
               </div>
             );
           })

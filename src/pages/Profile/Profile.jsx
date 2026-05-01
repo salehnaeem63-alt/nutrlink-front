@@ -1,15 +1,18 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCustomerProfile } from "../../api/customerapi";
+import { getCustomerProfile, updateProfilePicture } from "../../api/customerapi";
 import "./Profile.css";
 import Navbar from "../../component/Navigationbar/Navbar";
 import { AuthContext } from "../../AuthContext";
 
 export const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const { user, updateUserInfo } = useContext(AuthContext);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [localAvatar, setLocalAvatar] = useState(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const fileInputRef = useRef(null)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +30,35 @@ export const Profile = () => {
     fetchProfile();
     return () => { isMounted = false };
   }, []);
+
+  const handleImageChange = async (e) => {
+    // 1. Grab the physical file the user selected
+    const file = e.target.files[0];
+    if (!file) return; // If they cancel the selection, do nothing
+
+    // 2. Generate the instant local preview
+    const previewUrl = URL.createObjectURL(file);
+    setLocalAvatar(previewUrl);
+
+    // 3. Lock the UI
+    setUploadingImage(true);
+
+    try {
+      const response = await updateProfilePicture(file);
+
+      // Update global context so the Navbar syncs instantly
+      if (response && response.profilePic) {
+        updateUserInfo({ profilePic: response.profilePic });
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to upload image. Please try again.");
+      setLocalAvatar(null); // Revert the preview if the upload crashes
+    } finally {
+      // 5. Unlock the UI regardless of success or failure
+      setUploadingImage(false);
+    }
+  };
 
   if (loading) return <div className="profile-loader"><div className="loader-spinner" /></div>;
 
@@ -85,8 +117,45 @@ export const Profile = () => {
 
           {/* --- HEADER OVERLAP --- */}
           <div className="profile-header-overlap">
-            <div className="avatar-container">
-              <img src={user?.profilePic || "https://via.placeholder.com/150"} alt="Avatar" />
+            <div className="avatar-container" style={{ position: 'relative', display: 'inline-block' }}>
+
+              <img
+                src={localAvatar || data?.user?.profilePic || user?.profilePic || "https://via.placeholder.com/150"}
+                alt="Avatar"
+                style={{ opacity: uploadingImage ? 0.5 : 1, transition: "opacity 0.2s" }}
+              />
+
+              <button
+                onClick={() => fileInputRef.current.click()}
+                className="profile-change-btn"
+                aria-label="Update profile picture"
+                title="Update profile picture"
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+              >
+                {/* Professional SVG Camera Icon */}
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+              </button>
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                accept="image/png, image/jpeg, image/jpg, image/webp"
+                onChange={handleImageChange}
+              />
             </div>
 
             <div className="header-info">
