@@ -523,15 +523,15 @@ VITE_LOG_LEVEL=debug
 
 ### Landing Page
 
-![Landing Page](./screenshot/landing-page.png)
+![Landing Page](./screenshot/Landing-Page.png)
 ### Profile Pages
 ![Profile](./screenshot/Profile.png)
 
 ### Nutritionist Dashboard
-![Nutritionist Dashboard](./screenshot/Nutritionist-Dashboard.png)
+![Nutritionist Dashboard](./screenshot/nutritionist-dashboard.png)
 
 ### Booking System
-![Booking System](./screenshot/Booking-System.png)
+![Booking System](./screenshot/BookingSystem.png)
 
 ### AI Chatbot
 ![ AI Chatbot](./screenshot/Ai-chat.png)
