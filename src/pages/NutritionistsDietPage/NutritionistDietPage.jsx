@@ -295,7 +295,7 @@ export default function NutritionistDietPage() {
                         {activeTab === "dashboard" && (
                             <div className="ndp-tab-content">
                                 <div className="ndp-customer-dashboard-view" style={{ minHeight: '400px', backgroundColor: '#fff', borderRadius: '12px', padding: '10px' }}>
-                                    <Dashboard clientId={selected.userId} />
+                                    {/* <Dashboard clientId={selected.userId} /> */}
                                 </div>
                             </div>
                         )}

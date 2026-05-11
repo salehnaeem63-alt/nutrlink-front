@@ -1,9 +1,8 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../../AuthContext';
-import { showAlert } from '../../utils/alertService';
 import './NutritionistPageCards.css';
 
-const NutritionistPageCards = ({ nutritionist, onClick }) => {
+const NutritionistPageCards = ({ nutritionist, onClick, onLoginRequired }) => {
   const { user } = useContext(AuthContext);
   const isLogin = !!user;
 
@@ -23,7 +22,10 @@ const NutritionistPageCards = ({ nutritionist, onClick }) => {
   const handleCardClick = (e) => {
     e.stopPropagation();
     if (!isLogin) {
-      showAlert('Authentication Required', 'Please login to book an appointment.', 'warning');
+      // NEW: Instead of navigating to login page, trigger the login modal
+      if (onLoginRequired) {
+        onLoginRequired();
+      }
       return;
     }
     onClick()

@@ -5,6 +5,7 @@ import FilterBar from '../../component/FilterBar/FilterBar'
 import LoadingOverlay from "../../component/LoadingOverlay/LoadingOverlay"
 import NutritionistPageCards from "../../component/NutritionistCard/NutritionistPageCard"
 import BookingModal from '../../component/Bookingmodal/Bookingmodal';
+import LoginModal from '../../component/LoginModal/LoginModal'; // NEW: Import LoginModal
 import './Nutritionists.css'
 
 const Nutritionists = () => {
@@ -20,10 +21,9 @@ const Nutritionists = () => {
     search: ''
   })
 
-
   const [selectedId, setSelectedId] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false); // NEW: Login modal state
 
   useEffect(() => {
     const fetchExperts = async () => {
@@ -48,8 +48,34 @@ const Nutritionists = () => {
     return () => clearTimeout(timer); // Cleanup: Cancels the fetch if user types again
   }, [filters, sort]);
 
+  // NEW: Add/remove body class to prevent scrolling when modal is open
+  useEffect(() => {
+    if (isLoginModalOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [isLoginModalOpen]);
+
   const handleFilterChange = (newFilterData) => {
     setFilters((prev) => ({ ...prev, ...newFilterData }))
+  }
+
+  // NEW: Handle login requirement from card
+  const handleLoginRequired = () => {
+    setIsLoginModalOpen(true);
+  }
+
+  // NEW: Handle successful login
+  const handleLoginSuccess = () => {
+    // After login, you can optionally open the booking modal automatically
+    // if there was a pending booking
+    if (selectedId) {
+      setIsModalOpen(true);
+    }
   }
 
   const SORT_OPTIONS = [
@@ -101,7 +127,6 @@ const Nutritionists = () => {
           {/* Loader, error, and cards swap in/out */}
           {error && <div className="error-msg">{error}</div>}
 
-
           <div className="cards">
             {nutritionists.length === 0 && !loading ? (
               <p className="no-results">No nutritionists found. Try adjusting your filters.</p>
@@ -110,6 +135,7 @@ const Nutritionists = () => {
                 <NutritionistPageCards
                   key={n._id}
                   nutritionist={n}
+                  onLoginRequired={handleLoginRequired} // NEW: Pass login handler
                   onClick={() => {
                     setSelectedId(n.user._id)
                     setIsModalOpen(true)
@@ -121,13 +147,23 @@ const Nutritionists = () => {
         </div>
       </div>
 
+      {/* Booking Modal */}
       {isModalOpen && (
         <BookingModal
-        nutritionistId = {selectedId}
-        onClose={() => {
-          setIsModalOpen(false)
-          setSelectedId(null)
-        }} />
+          nutritionistId={selectedId}
+          onClose={() => {
+            setIsModalOpen(false)
+            setSelectedId(null)
+          }}
+        />
+      )}
+
+      {/* NEW: Login Modal */}
+      {isLoginModalOpen && (
+        <LoginModal
+          onClose={() => setIsLoginModalOpen(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
       )}
     </div >
   )

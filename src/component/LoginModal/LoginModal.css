@@ -1,0 +1,101 @@
+.login-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.login-modal-content {
+  position: relative;
+  max-width: 480px;
+  width: 100%;
+  max-height: none;
+  overflow: visible;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.login-modal-close {
+  position: absolute !important;
+
+  /* This controls how far down the X button is */
+  top: 35px !important;
+
+  /* This controls left/right position */
+  right: 12px !important;
+
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: background 0.2s ease, transform 0.2s ease;
+  z-index: 99999;
+}
+
+.login-modal-close:hover {
+  background: #f5f5f5;
+  transform: scale(1.1);
+}
+
+.login-modal-close svg {
+  color: #666;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .login-modal-overlay {
+    padding: 10px;
+  }
+
+  .login-modal-content {
+    max-width: 100%;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .login-modal-close {
+    top: 28px !important;
+    right: 12px !important;
+    width: 34px;
+    height: 34px;
+  }
+}

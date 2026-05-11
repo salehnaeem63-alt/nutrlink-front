@@ -512,3 +512,81 @@ label input:focus, label select:focus, label textarea:focus {
   .ndp-versions-grid { grid-template-columns: 1fr; }
   .ndp-form-row { flex-direction: column; }
 }
+/* ══════════════════════════════════════════════════════════════
+   ADDITIONS FOR NUTRITIONIST DIET PAGE - DASHBOARD TAB
+══════════════════════════════════════════════════════════════ */
+
+/* Dashboard view container */
+.ndp-customer-dashboard-view {
+  min-height: 500px;
+  background: var(--bg-white, #ffffff);
+  border-radius: 16px;
+  padding: 0;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+/* Hide the navbar and sidebar from Dashboard when embedded */
+.ndp-customer-dashboard-view .db-sidebar {
+  display: none !important;
+}
+
+.ndp-customer-dashboard-view .db-main {
+  margin-left: 0 !important;
+}
+
+.ndp-customer-dashboard-view .db-topbar {
+  position: relative !important;
+  border-radius: 16px 16px 0 0;
+}
+
+/* Adjust the dashboard root when embedded */
+.ndp-customer-dashboard-view .db-root {
+  min-height: auto;
+  background: transparent;
+}
+
+.ndp-customer-dashboard-view .db-root::before {
+  display: none;
+}
+
+.ndp-customer-dashboard-view .db-wrap {
+  min-height: auto;
+}
+
+/* Remove ambient background from embedded view */
+.ndp-customer-dashboard-view .db-ambient {
+  display: none;
+}
+
+/* Adjust content padding for embedded view */
+.ndp-customer-dashboard-view .db-content {
+  padding: 1.5rem;
+}
+
+/* Make sure charts and cards display nicely */
+.ndp-customer-dashboard-view .db-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.ndp-customer-dashboard-view .db-chart-wrap {
+  background: transparent;
+}
+
+/* Ensure period tabs are visible */
+.ndp-customer-dashboard-view .db-period-tabs {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ndp-customer-dashboard-view {
+    min-height: 400px;
+    padding: 0;
+  }
+  
+  .ndp-customer-dashboard-view .db-content {
+    padding: 1rem;
+  }
+}
