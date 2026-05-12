@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { getCustomerProfile } from '../../api/customerapi';
+import { Link, useNavigate  } from 'react-router-dom';
 import { AuthContext } from '../../AuthContext';
 import Navbar from '../../component/Navigationbar/Navbar';
 import { NutrlinkLogo } from '../../component/Icons';
@@ -8,7 +9,6 @@ import {
   getsammury, getlogs, getlogtoday, creatlog,
   getCustomerAppointments, getClientDashboardStats
 } from "../../api/progressApi";
-import { getCustomerProfile } from '../../api/customerapi';
 import './Dashboard.css';
 
 const Dashboard = ({ clientId, defaultTab = "overview", showAllSections = false }) => {
@@ -28,6 +28,7 @@ const Dashboard = ({ clientId, defaultTab = "overview", showAllSections = false 
   const [showLogForm, setShowLogForm] = useState(false);
 const [activeTab, setActiveTab] = useState(defaultTab);
   const [logForm, setLogForm] = useState({ waterIntake: '', exerciseMinutes: '', weight: '' });
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -107,17 +108,32 @@ const [activeTab, setActiveTab] = useState(defaultTab);
     } catch (error) { console.error(error); }
   };
 
-  const handleCreateGoal = async (e) => {
-    e.preventDefault();
-    if (!newGoal.trim()) return;
-    try {
-      const result = await creategoal({ data: newGoal });
-      setNewGoal('');
-      setShowGoalInput(false);
-      if (result.goals) setGoals(result.goals);
-      else fetchDashboardData();
-    } catch (error) { console.error(error); }
-  };
+const handleCreateGoal = async (e) => {
+  e.preventDefault();
+  if (!newGoal.trim()) return;
+
+  try {
+    const profile = await getCustomerProfile();
+
+    if (!profile) {
+      alert("Please create your profile first before adding a goal.");
+      navigate("/createprofile");
+      return;
+    }
+
+    const result = await creategoal({ data: newGoal });
+
+    setNewGoal('');
+    setShowGoalInput(false);
+
+    if (result.goals) setGoals(result.goals);
+    else fetchDashboardData();
+
+  } catch (error) {
+    console.error(error);
+    alert(error.response?.data?.message || "Failed to add goal");
+  }
+};;
 
   const handleCreateLog = async (e) => {
     e.preventDefault();
