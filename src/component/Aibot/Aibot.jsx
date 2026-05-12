@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import { createmessage, createChat, getchat } from "../../api/ai"; // adjust path as needed
+import { createmessage, createChat, getchat, getmessages  } from "../../api/ai"; // adjust path as needed
 import "./Aibot.css";
 
 export const Aibot = () => {
@@ -19,32 +19,50 @@ export const Aibot = () => {
     if (isOpen && !chatId) initChat();
   }, [isOpen]);
 
-  const initChat = async () => {
-    try {
-      // getchat returns a plain array: [ { _id, title }, ... ]
-      const existing = await getchat();
-      const list = Array.isArray(existing) ? existing : [];
-      if (list.length > 0) {
-        setChatId(list[0]._id);
-      } else {
-        // createChat returns the chat object directly: { _id, title, ... }
-        const newChat = await createChat({ title: "Quick Chat" });
-        setChatId(newChat._id);
-      }
-    } catch (err) {
-      console.error("Failed to init chat", err);
+ const initChat = async () => {
+  try {
+    const existing = await getchat();
+    const list = Array.isArray(existing) ? existing : [];
+
+    if (list.length > 0) {
+      setChatId(list[0]._id);
+    } else {
+      const newChat = await createChat({ title: "Quick Chat" });
+      setChatId(newChat._id);
     }
-  };
+  } catch (err) {
+    console.error("Failed to get chats, creating new chat...", err);
+
+    try {
+      const newChat = await createChat({ title: "Quick Chat" });
+      setChatId(newChat._id);
+    } catch (createErr) {
+      console.error("Failed to create chat", createErr);
+    }
+  }
+};
 
   const sendMessage = async () => {
-    if (!input.trim() || !chatId || loading) return;
-    const userMsg = { role: "user", content: input };
+if (!input.trim() || loading) return;
+
+let currentChatId = chatId;
+
+if (!currentChatId) {
+  try {
+    const newChat = await createChat({ title: "Quick Chat" });
+    currentChatId = newChat._id;
+    setChatId(currentChatId);
+  } catch (err) {
+    console.error("Failed to create chat", err);
+    return;
+  }
+}    const userMsg = { role: "user", content: input };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
     try {
       // createmessage returns: { reply: "..." }
-      const res = await createmessage({ message: input }, chatId);
+      const res = await createmessage({ message: input }, currentChatId);
       setMessages((prev) => [...prev, { role: "assistant", content: res.reply }]);
     } catch {
       setMessages((prev) => [

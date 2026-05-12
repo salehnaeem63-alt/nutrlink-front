@@ -335,3 +335,111 @@
     padding: 16px 16px 80px 16px;
   }
 }
+/* Completion Modal Styles */
+.completion-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+
+.completion-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.completion-modal h2 {
+  margin: 0 0 12px 0;
+  font-size: 24px;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.completion-modal p {
+  margin: 0 0 28px 0;
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.completion-modal-actions {
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+}
+
+.completion-modal-actions button {
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.btn-complete {
+  background: #10b981;
+  color: white;
+}
+
+.btn-complete:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-complete:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.btn-skip {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.btn-skip:hover:not(:disabled) {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btn-skip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (min-width: 640px) {
+  .completion-modal-actions {
+    flex-direction: row;
+  }
+  
+  .completion-modal-actions button {
+    flex: 1;
+  }
+}

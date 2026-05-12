@@ -301,7 +301,7 @@ export async function getClientDashboardStats(clientId, chartPeriod = 30) {
 
   try {
     const res = await fetch(
-      `http://localhost:5000/nutrlink/api/dashboard/client-peek/${clientId}?days=${chartPeriod}`,
+      `http://localhost:5000/nutrlink/api/cdashboard/client-peek/${clientId}?days=${chartPeriod}`,
       {
         headers: {
           "Authorization": `Bearer ${token}`

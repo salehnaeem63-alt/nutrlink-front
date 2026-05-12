@@ -67,7 +67,6 @@ function App() {
           <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
 
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          {/* Note: The duplicate /Nprofile Route was removed from here */}
           <Route path="/creatNprofile" element={<ProtectedRoute><NutriCreateProfile /></ProtectedRoute>} />
           <Route path="/Ndashboard" element={<ProtectedRoute><Ndashboard /></ProtectedRoute>} />
           <Route path="/Ai" element={<ProtectedRoute><Aifull /></ProtectedRoute>} />

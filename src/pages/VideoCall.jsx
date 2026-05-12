@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import { AuthContext } from '../AuthContext';
+import { markCompleted } from '../api/appointmetapi'; // Import your API function
 import './VideoCall.css';
 import { 
   Mic, 
@@ -37,6 +38,10 @@ const VideoCall = () => {
   const [callStatus, setCallStatus] = useState('Connecting...');
   const [showSettings, setShowSettings] = useState(false);
   const [error, setError] = useState(null);
+  
+  // New state for completion modal
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [isMarkingComplete, setIsMarkingComplete] = useState(false);
 
   // Device selection
   const [audioDevices, setAudioDevices] = useState([]);
@@ -84,9 +89,8 @@ const VideoCall = () => {
       };
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            console.log('🎥 Local stream obtained, video tracks:', stream.getVideoTracks().length);
+      console.log('🎥 Local stream obtained, video tracks:', stream.getVideoTracks().length);
 
-      
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
@@ -104,14 +108,12 @@ const VideoCall = () => {
   const createPeerConnection = (targetSocketId) => {
     const peerConnection = new RTCPeerConnection(iceServers);
 
-    // Add local stream tracks
     if (localStreamRef.current) {
       localStreamRef.current.getTracks().forEach(track => {
         peerConnection.addTrack(track, localStreamRef.current);
       });
     }
 
-    // Handle remote stream
     peerConnection.ontrack = (event) => {
       console.log('📺 Remote stream received');
       if (remoteVideoRef.current) {
@@ -119,7 +121,6 @@ const VideoCall = () => {
       }
     };
 
-    // Handle ICE candidates – use the provided targetSocketId
     peerConnection.onicecandidate = (event) => {
       if (event.candidate && socketRef.current && targetSocketId) {
         console.log('📡 Sending ICE candidate to', targetSocketId);
@@ -130,7 +131,6 @@ const VideoCall = () => {
       }
     };
 
-    // Log connection state
     peerConnection.onconnectionstatechange = () => {
       console.log('🔌 Connection state:', peerConnection.connectionState);
       if (peerConnection.connectionState === 'connected') {
@@ -142,27 +142,6 @@ const VideoCall = () => {
 
     return peerConnection;
   };
-
-  //   // Handle connection state changes
-  //   peerConnection.onconnectionstatechange = () => {
-  //     console.log('Connection state:', peerConnection.connectionState);
-  //     switch (peerConnection.connectionState) {
-  //       case 'connected':
-  //         setCallStatus('Connected');
-  //         break;
-  //       case 'disconnected':
-  //         setCallStatus('Disconnected');
-  //         break;
-  //       case 'failed':
-  //         setCallStatus('Connection failed');
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   };
-
-  //   return peerConnection;
-  // };
 
   // Create and send offer
   const createOffer = async (socketId) => {
@@ -378,8 +357,8 @@ const VideoCall = () => {
     }
   };
 
-  // End call
-  const endCall = () => {
+  // Cleanup call resources
+  const cleanupCall = () => {
     if (socketRef.current) {
       socketRef.current.emit('leave-room', { roomId: appointmentId });
       socketRef.current.disconnect();
@@ -392,7 +371,38 @@ const VideoCall = () => {
     if (peerConnectionRef.current) {
       peerConnectionRef.current.close();
     }
+  };
 
+  // End call - Updated to show modal for nutritionists
+  const endCall = () => {
+    cleanupCall();
+
+    // Check if user is a nutritionist (adjust this condition based on your user object structure)
+    if (user?.role === 'nutritionist' || user?.isNutritionist) {
+      setShowCompletionModal(true);
+    } else {
+      navigate(-1);
+    }
+  };
+
+  // Handle marking appointment as complete
+  const handleMarkComplete = async () => {
+    setIsMarkingComplete(true);
+    try {
+      await markCompleted(appointmentId);
+      console.log('Appointment marked as completed');
+      setShowCompletionModal(false);
+      navigate(-1);
+    } catch (error) {
+      console.error('Error marking appointment as complete:', error);
+      alert('Failed to mark appointment as complete. Please try again.');
+      setIsMarkingComplete(false);
+    }
+  };
+
+  // Handle skipping completion
+  const handleSkipCompletion = () => {
+    setShowCompletionModal(false);
     navigate(-1);
   };
 
@@ -400,16 +410,12 @@ const VideoCall = () => {
   useEffect(() => {
     const init = async () => {
       try {
-        // Get available devices
         await getMediaDevices();
-
-        // Initialize local stream
         await initializeLocalStream(selectedAudioDevice, selectedVideoDevice);
 
-        // Connect to socket
         socketRef.current = io(SOCKET_URL);
 
-            socketRef.current.on('connect', () => {
+        socketRef.current.on('connect', () => {
           console.log('Socket connected:', socketRef.current.id);
           
           if (!hasJoinedRef.current) {
@@ -421,7 +427,7 @@ const VideoCall = () => {
             });
           }
         });
-        // Socket event handlers
+
         socketRef.current.on('room-users', ({ participants }) => {
           if (participants.length > 0) {
             setRemoteUser(participants[0]);
@@ -454,7 +460,6 @@ const VideoCall = () => {
           setCallStatus('Call ended');
         });
 
-        // Error handlers
         socketRef.current.on('room-id-missing', () => {
           setError('Room ID is missing');
         });
@@ -487,9 +492,8 @@ const VideoCall = () => {
 
     init();
 
-    // Cleanup
     return () => {
-         hasJoinedRef.current = false; 
+      hasJoinedRef.current = false;
       if (socketRef.current) {
         socketRef.current.disconnect();
       }
@@ -637,6 +641,33 @@ const VideoCall = () => {
           >
             Close
           </button>
+        </div>
+      )}
+
+      {/* Completion Modal */}
+      {showCompletionModal && (
+        <div className="completion-modal-overlay">
+          <div className="completion-modal">
+            <h2>Mark Appointment Complete?</h2>
+            <p>Would you like to mark this appointment as completed?</p>
+            
+            <div className="completion-modal-actions">
+              <button
+                className="btn-complete"
+                onClick={handleMarkComplete}
+                disabled={isMarkingComplete}
+              >
+                {isMarkingComplete ? 'Marking Complete...' : 'Yes, Mark Complete'}
+              </button>
+              <button
+                className="btn-skip"
+                onClick={handleSkipCompletion}
+                disabled={isMarkingComplete}
+              >
+                No, Skip
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

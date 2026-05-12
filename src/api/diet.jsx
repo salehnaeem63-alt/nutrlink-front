@@ -2,7 +2,6 @@ const BASE = "http://localhost:5000/nutrlink/api";
 
 // ── helper: attach token from localStorage ────────────────────────────────────
 function authHeaders() {
-    // CHANGED: Now looking for "authToken" to match AuthContext
     const token = localStorage.getItem("authToken");
     return {
         "Content-Type": "application/json",
@@ -154,13 +153,13 @@ export async function removeMealFromDiet(dietId, mealId) {
 }
 
 /**
- * PATCH /plan/:dietId/meals/:mealId/done
+ * PATCH /plan/:dietId/meals/:mealId/status   ← FIX: was /done, now /status
  * Toggles isCompleted on the meal + recalculates diet progress %
  * Customer only
  */
 export async function markMealAsDone(dietId, mealId) {
     try {
-        const res = await fetch(`${BASE}/plan/${dietId}/meals/${mealId}/done`, {
+        const res = await fetch(`${BASE}/plan/${dietId}/meals/${mealId}/status`, {
             method: "PATCH",
             headers: authHeaders(),
         });

@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { AuthContext } from '../../AuthContext';
 
 import Navbar from '../../component/Navigationbar/Navbar';
 import AuthCard from '../../component/AuthCard/AuthCard';
@@ -22,6 +23,7 @@ const NAV_LINKS = [
 const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { handleLogin } = useContext(AuthContext);
 
   // Get role from RegisterType page
   const role = location.state?.role || 'customer';
@@ -104,10 +106,12 @@ const Register = () => {
 
       if (role === 'nutritionist') {
         setPending(true); // show pending screen
-      } else {
-        localStorage.setItem('authToken', response.token);
-        navigate('/dashboard');
-      }
+} else {
+  const { token, ...userData } = response;
+
+  handleLogin(userData, token);
+  navigate('/home', { replace: true });
+}
     } catch (error) {
       alert(error.message);
     }

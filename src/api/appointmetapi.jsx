@@ -35,11 +35,37 @@ export async function getNutritionistSchedule() {
   return res.data;
 }
 
-export async function markCompleted(appointmentId) {
-  const res = await api.put(`/complete/${appointmentId}`);
-  return res.data;
-}
+//mark completed
+export async function  markCompleted(appointmentId) 
+ {
+        const token = localStorage.getItem("authToken");
 
+    try {
+
+        const res = await fetch(
+            `http://localhost:5000/nutrlink/api/appointments/complete/${appointmentId}`,
+            {
+                method: "PUT",
+                headers:  { 
+                         "Authorization": `Bearer ${token}`
+                    }
+                
+            }
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.message || "failed");
+        }
+
+        return data;
+
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
 // ═══════════════════════════════════════════════════════════
 // CUSTOMER ENDPOINTS
 // ═══════════════════════════════════════════════════════════
