@@ -9,7 +9,6 @@
 }
 
 /* ── Main Navbar Container ── */
-/* ── Main Navbar Container ── */
 .navbar {
   position: sticky;
   top: 15px;
@@ -66,6 +65,14 @@
   padding: 0;
 }
 
+/* Scope li styles strictly inside navbar__links */
+.navbar__links > li {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
 .nav-link {
   text-decoration: none;
   color: var(--nav-text-light);
@@ -77,7 +84,7 @@
   transition: all 0.4s ease;
 }
 
-/* 1. Base Underline Setup */
+/* Underline animation */
 .nav-link::after {
   content: "";
   position: absolute;
@@ -89,23 +96,20 @@
   border-radius: 2px;
   transform: scaleX(0);
   transform-origin: right;
-  transition: transform .6s ease;
+  transition: transform 0.6s ease;
 }
 
-/* 2. Show underline on Hover or Active */
 .nav-link:hover::after,
 .nav-link.active::after {
   transform: scaleX(1);
   transform-origin: left;
 }
 
-/* 3. THE FIX: Hide active underline if the parent container is hovered, UNLESS hovering the active link itself */
 .navbar__links:hover .nav-link.active:not(:hover)::after {
   transform: scaleX(0);
   transform-origin: right;
 }
 
-/* Color changes */
 .nav-link:hover,
 .nav-link.active {
   color: var(--nav-green);
@@ -115,7 +119,7 @@
   font-weight: 600;
 }
 
-/* ── Actions (Login / Signup / Profile) ── */
+/* ── Actions ── */
 .navbar__actions {
   display: flex;
   align-items: center;
@@ -157,6 +161,7 @@
 .navbar__user-group {
   display: flex;
   align-items: center;
+  gap: 1.5rem;
 }
 
 .navbar__profile-container {
@@ -179,7 +184,8 @@
   object-fit: cover;
   border: 2px solid transparent;
   cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.2s;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    border-color 0.2s;
 }
 
 .navbar__profile-btn:hover .navbar__avatar {
@@ -195,14 +201,15 @@
   background-color: white;
   border: 1px solid #f3f4f6;
   border-radius: 16px;
-  list-style: none;
   min-width: 250px;
   z-index: 1000;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
   overflow: hidden;
   padding-bottom: 8px;
   animation: slideIn 0.2s ease-out forwards;
   transform-origin: top right;
+  /* Removed list-style: none from here — scoped below */
 }
 
 @keyframes slideIn {
@@ -270,7 +277,7 @@
 
 .navbar__manage-profile:hover {
   border-color: var(--nav-text-light);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .divider {
@@ -279,14 +286,21 @@
   margin: 8px 0;
 }
 
+/* Scope dropdown list strictly — this was leaking globally */
 .navbar__dropdown-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.navbar__dropdown li a,
-.navbar__dropdown li button {
+.navbar__dropdown-list > li {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar__dropdown-list > li a,
+.navbar__dropdown-list > li button {
   display: flex;
   align-items: center;
   padding: 12px 20px;
@@ -302,7 +316,7 @@
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.navbar__dropdown li a:hover {
+.navbar__dropdown-list > li a:hover {
   background-color: #f0fdf4;
   color: var(--nav-green);
 }
@@ -311,30 +325,24 @@
   color: #ef4444 !important;
 }
 
-.navbar__dropdown li button.logout-link:hover {
+.navbar__dropdown-list > li button.logout-link:hover {
   background-color: #fef2f2;
   color: #dc2626 !important;
 }
 
 /* ── Messages Icon & Badge ── */
-.navbar__user-group {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem; /* Ensures spacing between the message icon and avatar */
-}
-
 .navbar__messages-btn {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--nav-text-dark); /* Matches your existing dark text color */
+  color: var(--nav-text-dark);
   text-decoration: none;
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .navbar__messages-btn:hover {
-  color: var(--nav-green); /* Matches your brand green */
+  color: var(--nav-green);
   transform: translateY(-1px);
 }
 
@@ -342,24 +350,24 @@
   position: absolute;
   top: -6px;
   right: -8px;
-  background-color: #ef4444; /* Standard alert red */
+  background-color: #ef4444;
   color: white;
   font-size: 0.7rem;
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 12px;
-  border: 2px solid white; /* Creates a clean cutout effect */
+  border: 2px solid white;
   line-height: 1;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-} 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-/* ── Responsive Design ── */
+/* ── Responsive ── */
 @media (max-width: 900px) {
   .navbar {
     margin: 10px 15px;
     border-radius: 16px;
   }
-  
+
   .navbar__inner {
     padding: 0 16px;
   }
@@ -371,9 +379,8 @@
   .navbar__brand {
     font-size: 18px;
   }
-  
+
   .navbar__brand-icon svg {
     width: 24px;
   }
 }
-
