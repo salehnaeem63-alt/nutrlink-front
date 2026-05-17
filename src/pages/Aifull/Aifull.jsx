@@ -18,6 +18,9 @@ export const Aifull = () => {
   const [loadingChats, setLoadingChats] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
 
+  // 🟢 NEW: Local state for filtering search history
+  const [searchHistoryQuery, setSearchHistoryQuery] = useState("");
+
   // modal state for naming a new chat
   const [showModal, setShowModal] = useState(false);
   const [newChatTitle, setNewChatTitle] = useState("");
@@ -163,6 +166,12 @@ export const Aifull = () => {
   const activeChat = chats.find((c) => c._id === activeChatId);
   const isAI = (role) => role === "assistant";
 
+  // 🟢 NEW: Filter our chats array locally using case-insensitive validation
+  const filteredChats = chats.filter((chat) => {
+    const titleText = chat.title || "Untitled Chat";
+    return titleText.toLowerCase().includes(searchHistoryQuery.toLowerCase());
+  });
+
   return (
     <div className="aifull-page">
 
@@ -206,6 +215,26 @@ export const Aifull = () => {
           </button>
         </div>
 
+        {/* 🟢 NEW: History Search Input Bar Section */}
+        <div className="aifull-history-search-container">
+          <svg className="aifull-history-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search conversations..."
+            className="aifull-history-search-input"
+            value={searchHistoryQuery}
+            onChange={(e) => setSearchHistoryQuery(e.target.value)}
+          />
+          {searchHistoryQuery && (
+            <button className="aifull-clear-history-search" onClick={() => setSearchHistoryQuery("")}>
+              ×
+            </button>
+          )}
+        </div>
+
         <div className="aifull-chat-list">
           {loadingChats ? (
             <div className="aifull-loading" style={{ height: "80px" }}>
@@ -213,8 +242,12 @@ export const Aifull = () => {
             </div>
           ) : chats.length === 0 ? (
             <div className="aifull-no-chats">No conversations yet.<br />Start a new chat!</div>
+          ) : filteredChats.length === 0 ? (
+            // 🟢 NEW: UI feedback if search results return empty
+            <div className="aifull-no-chats">No matching conversations found.</div>
           ) : (
-            chats.map((chat) => (
+            // 🟢 CHANGED: We iterate over filteredChats instead of chats directly
+            filteredChats.map((chat) => (
               <div
                 key={chat._id}
                 className={`aifull-chat-item ${activeChatId === chat._id ? "active" : ""}`}
@@ -312,8 +345,8 @@ export const Aifull = () => {
             />
             <button
               className="aifull-send-btn"
-              onClick={sendMessage}
               disabled={loading || !input.trim()}
+              onClick={sendMessage}
             >
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
